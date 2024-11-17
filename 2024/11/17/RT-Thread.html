@@ -172,7 +172,33 @@
 <p>为了方便学习，最近一直在寻找一款芯片和开发板，用来摸索这方面的技术。各种论坛上搜索了一圈，最终看上了<strong>泰山派</strong>这款开发板。</p>
 <p>选择它的理由有很多，它是一款非常Open的开发板，嘉立创将这款开发板的原理图、PCB完全开源，立创开源社区在国内也是十分活跃，什么实力不用多说。其次是这款开发板的主控用的是阉割版的RK3568（RK3566），各项性能和外设资源也都完全满足学习的要求，并且瑞芯微的资料也比较开放和详细。另外RT-Thread官方对RK3568进行了适配（貌似适配的OpenAMP方案），减少了移植RTT的工作。关于Linux，有瑞星微官方和各路开源大神的支持，也不算太慌。</p>
 <p>所以接下来，只需要专心研究如何同时运行Linux和RT-Thread即可。</p>
-
+<p>其实在以前从来没有认真的去整理学习一项新的技术或知识的过程，以至于在学习完成后，在想去复盘的时候完全不知道如何开始，学习的过程迷迷糊糊的就结束了。所以打算将接下来的学习一步一步的记录下来，方便自己复盘和反思不足。</p>
+<h1 id="闲言碎语"><a href="#闲言碎语" class="headerlink" title="闲言碎语"></a>闲言碎语</h1><p>这个章节是我用来记录在学习的过程中突发的一些感悟，或者一些奇奇怪怪的想法，所以，如果后来有幸有同学准备读这篇文章的时候，可以忽略掉这一章。</p>
+<p>其实本来这篇文章我想以时间线的顺序记录每个任务点的，但是想了想，还是算了，主要是自己太菜了（菜就多练），保不齐这次学习需要多久，哈哈哈。</p>
+<p>我在想，要不要事无巨细的将学习和开发过程记录下来。假如，我是说假如，将来有人不幸打算来看这篇文章，哪里面参杂太多的废话岂不是让读的人很痛苦哈哈哈。管他的呢，因该没人会来看。</p>
+<p>很早之前一直也想像那些大神一样创建一个自己的博客，用来记录或者分享技术。但是由于各种原因，期间也尝试过最终都以失败告终。刚才突然思考了一些失败的原因，核心原因还是自己太懒来了，坚持不下去。</p>
+<h1 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h1><h2 id="运行Linux"><a href="#运行Linux" class="headerlink" title="运行Linux"></a>运行Linux</h2><p>拿到开发板后，第一个任务就是将开发板运行起来。</p>
+<p>嘉立创将各种资源和文档进行了整理，全部都放在了 <a target="_blank" rel="noopener" href="https://wiki.lckfb.com/zh-hans/tspi-rk3566/">泰山派文档中心</a>。</p>
+<p>泰山派Linux的非常简单，按照官方文档将SDK下载到Ubuntu中，配置好相关的环境之后，静静等待编译就行了。</p>
+<p>由于本身瑞芯微的资料和资源还算成熟，在实际的操作过程中几乎没有遇到什么困难。所以本章比较短，草草结束完事儿。要是后面遇到了前面埋下的坑，到时候再来填也不是不行。</p>
+<p>吐槽一下，瑞芯微的SDK真是非常非常的臃肿，超级大。第一编译的时间特别九，需要耐心等待。真是苦了我的老神船了。</p>
+<p><img src="/2024/11/17/RT-Thread/image-20241117183606186.png" alt="image-20241117183606186"></p>
+<p>插播移植打瞌睡的巧克力（可恶，下次让他去上班）。</p>
+<h2 id="运行RT-Thread"><a href="#运行RT-Thread" class="headerlink" title="运行RT-Thread"></a>运行RT-Thread</h2><p>Linux顺利运行后，接下来就要开始尝试运行RT-Thread了。</p>
+<p>翻了一下<a target="_blank" rel="noopener" href="https://gitee.com/rtthread/rt-thread/tree/master/bsp/rockchip">RT-Thread的官方仓库</a>，发现RTT官方适配过RK3568。因为RK3566其实和RK3568差不多，所以接下来就是尝试一下能不能直接将RTT在这个板子上跑起来。</p>
+<p><img src="/2024/11/17/RT-Thread/image-20241117183957575.png" alt="image-20241117183957575"></p>
+<p>进入RK3568的BSP文件目录下，右键在此打开RTT ENV工具，输入<code>scons -j16</code>，尝试编译一下。需要注意的是，RT-Thread5.0新版的对老版本的ENV支持得不是很好，所以为了避免麻烦，将ENV升级到了2.0。</p>
+<p><img src="/2024/11/17/RT-Thread/image-20241117185039603.png" alt="image-20241117185039603"></p>
+<p><img src="/2024/11/17/RT-Thread/image-20241117185539890.png" alt="image-20241117185539890"></p>
+<p>不出意外的话是出意外了，编译不了，提示找不到工具链。不过不用慌，我只需要将ARM官网上下载一个工具链即可。ENV中提示的是找不到<em>gcc-arm-8.3-2019.03-x86_64-aarch64-elf</em>这个版本的工具链，为了防止出现一些奇奇怪怪的问题，我们也下载这个版本的就行。传送门<a target="_blank" rel="noopener" href="https://developer.arm.com/-/media/Files/downloads/gnu-a/8.3-2019.03/binrel/gcc-arm-8.3-2019.03-i686-mingw32-aarch64-elf.tar.xz?revision=1c8636ec-0cca-455b-be17-726f1b396f46&rev=1c8636ec0cca455bbe17726f1b396f46&hash=0107DE39C8803E7C762E2FB079BF3822AA6B6AE2">gcc-arm-8.3-2019.03-i686-mingw32-aarch64-elf.tar.xz</a>。</p>
+<p><img src="/2024/11/17/RT-Thread/image-20241117190013676.png" alt="image-20241117190013676"></p>
+<p><img src="/2024/11/17/RT-Thread/image-20241117191915761.png" alt="image-20241117191915761"></p>
+<p>工具链下载完成后按照BSP中的READ_ME的提示配置好环境变量然后再次编译，编译成功，使用<code>scons --dist</code>命令打包工程即可，打包的工程存放在BSP目录下的dist文件夹下，后续可以将工程复制到任何路径下进行开发了。</p>
+<p>接下来需要考虑如何将编译出来的RT-Thread固件下载到开发板中，让他跑起来了。方法有很多，比如使用瑞芯微的下载工具<em>RKDevTool_Release</em>，将固件下载至指定的分区然后再通过Uboot去引导芯片启动RTT。但是显然这并不是一个优雅的方案。既然需要Uboot引导系统，那可以直接采用Uboot通过tft的方式将固件下载到指定的分区，接着在进行引导。</p>
+<p>由于嘉立创提供的SDK只配置了Linux的网口驱动，没有开启Uboot的网口驱动，所以需要将Linux那边对网口的驱动配置的设备树搬到Uboot这边，将Uboot下的网口打开。</p>
+<p>····················································································································继续。</p>
+<p>接下来只需要配置好Tftp服务器与开发板的链接，然后每次下载按一下复位键就可以自动下载和引导，一气呵成，十分优雅。</p>
+<h1 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h1>
     </div>
 
     
@@ -185,7 +211,7 @@
         <p class="tags">
             
             <i class="icon"></i>
-            <a href="/tags/RT-Thread/" class="tag">#RT-Thread</a>
+            <a href="/tags/RT-Thread/" class="tag">#RT-Thread</a><a href="/tags/泰山派/" class="tag">#泰山派</a><a href="/tags/RK3566/" class="tag">#RK3566</a><a href="/tags/OPenAMP/" class="tag">#OPenAMP</a>
         </p>
         
     </div>
