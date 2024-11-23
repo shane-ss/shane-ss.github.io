@@ -7,7 +7,7 @@
   
   <title>泰山派&amp;RT-Thread - Shane</title>
   
-    <link rel="shortcut icon" href="/favicon.png">
+    <link rel="shortcut icon" href="/favicon.ico">
   
   
     <link rel='manifest' href='/manifest.json'>
@@ -22,7 +22,7 @@
   
   <meta property="og:url" content="https://shane-ss.github.io/2024/11/17/RT-Thread.html" />
   
-  <meta property="og:image" content="/favicon.png" />
+  <meta property="og:image" content="/favicon.ico" />
   
   <meta property="og:article:published_time" content="2024-11-17T06:51:22.000Z" />
   
@@ -172,12 +172,12 @@
 <p>为了方便学习，最近一直在寻找一款芯片和开发板，用来摸索这方面的技术。各种论坛上搜索了一圈，最终看上了<strong>泰山派</strong>这款开发板。</p>
 <p>选择它的理由有很多，它是一款非常Open的开发板，嘉立创将这款开发板的原理图、PCB完全开源，立创开源社区在国内也是十分活跃，什么实力不用多说。其次是这款开发板的主控用的是阉割版的RK3568（RK3566），各项性能和外设资源也都完全满足学习的要求，并且瑞芯微的资料也比较开放和详细。另外RT-Thread官方对RK3568进行了适配（貌似适配的OpenAMP方案），减少了移植RTT的工作。关于Linux，有瑞星微官方和各路开源大神的支持，也不算太慌。</p>
 <p>所以接下来，只需要专心研究如何同时运行Linux和RT-Thread即可。</p>
-<p>其实在以前从来没有认真的去整理学习一项新的技术或知识的过程，以至于在学习完成后，在想去复盘的时候完全不知道如何开始，学习的过程迷迷糊糊的就结束了。所以打算将接下来的学习一步一步的记录下来，方便自己复盘和反思不足。</p>
 <h1 id="闲言碎语"><a href="#闲言碎语" class="headerlink" title="闲言碎语"></a>闲言碎语</h1><p>这个章节是我用来记录在学习的过程中突发的一些感悟，或者一些奇奇怪怪的想法，所以，如果后来有幸有同学准备读这篇文章的时候，可以忽略掉这一章。</p>
+<p>其实在以前从来没有认真的去整理学习一项新的技术或知识的过程，以至于在学习完成后，在想去复盘的时候完全不知道如何开始，学习的过程迷迷糊糊的就结束了。所以打算将接下来的学习一步一步的记录下来，方便自己复盘和反思不足。</p>
 <p>其实本来这篇文章我想以时间线的顺序记录每个任务点的，但是想了想，还是算了，主要是自己太菜了（菜就多练），保不齐这次学习需要多久，哈哈哈。</p>
 <p>我在想，要不要事无巨细的将学习和开发过程记录下来。假如，我是说假如，将来有人不幸打算来看这篇文章，哪里面参杂太多的废话岂不是让读的人很痛苦哈哈哈。管他的呢，因该没人会来看。</p>
 <p>很早之前一直也想像那些大神一样创建一个自己的博客，用来记录或者分享技术。但是由于各种原因，期间也尝试过最终都以失败告终。刚才突然思考了一些失败的原因，核心原因还是自己太懒来了，坚持不下去。</p>
-<h1 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h1><h2 id="编译Linux"><a href="#编译Linux" class="headerlink" title="编译Linux"></a>编译Linux</h2><p>拿到开发板后，第一个任务就是将开发板运行起来。</p>
+<h1 id="Linux篇"><a href="#Linux篇" class="headerlink" title="Linux篇"></a>Linux篇</h1><h2 id="编译Linux"><a href="#编译Linux" class="headerlink" title="编译Linux"></a>编译Linux</h2><p>拿到开发板后，第一个任务就是将开发板运行起来。</p>
 <p>嘉立创将各种资源和文档进行了整理，全部都放在了 <a target="_blank" rel="noopener" href="https://wiki.lckfb.com/zh-hans/tspi-rk3566/">泰山派文档中心</a>。</p>
 <p>泰山派Linux的编译过程比较简单，因为本身瑞芯微的资料还算成熟，在实际的操作过程中几乎没有遇到什么困难按照官方文档将SDK下载到Ubuntu中，配置好相关的环境之后，静静等待编译就行了。</p>
 <p>但是由于瑞芯微提供的SDK的开发环境是Ubuntu18.04， 而Ubuntu18.04已经停止维护了，所以为了兼容我其他项目的环境，需要将Ubuntu切换成22.04的版本。然而目前的SDK在Ubuntu22.04上存在许多兼容性问题，可能导致编译失败。不过比较好的是嘉立创的文档中有提到如何解决在Ubuntu22.04上编译的一系列问题。一键直达<a target="_blank" rel="noopener" href="https://wiki.lckfb.com/zh-hans/tspi-rk3566/documentation/gj-ubuntu-22-04-lts-compile.html">立创·泰山派RK3566开发 Ubuntu 22.04LTS编译</a>。</p>
@@ -186,7 +186,7 @@
 
 <p><img src="/2024/11/17/RT-Thread/784965773ba03b5737db7206bdeaf48b_720.png" alt="784965773ba03b5737db7206bdeaf48b_720"></p>
 <p>这个问题是由于 <code>fwriter_buffer</code> 和 <code>bwriter_buffer</code> 出现了重复定义，解决方式就是修改<code>mksquashfs.h</code>文件的136行，加上extern修饰。</p>
-<p>使用命令查找<code>mksquashfs.h</code>文件路径，可以找到两个文路径，统统按照下面的方法修改掉就行了。</p>
+<p>使用命令查找<code>mksquashfs.h</code>文件路径，可以找到两个文件路径，统统按照下面的方法修改掉就行了。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find -name mksquashfs.h</span><br></pre></td></tr></table></figure>
 
 <p><img src="/2024/11/17/RT-Thread/image-20241123150921520.png" alt="image-20241123150921520"></p>
@@ -194,13 +194,30 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">extern</span> <span class="class"><span class="keyword">struct</span> <span class="title">cache</span> *<span class="title">bwriter_buffer</span>, *<span class="title">fwriter_buffer</span>;</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/2024/11/17/RT-Thread/c44f78a23856e5d2339b76b1cf35dbee.png" alt="c44f78a23856e5d2339b76b1cf35dbee"></p>
-<p>需要注意的是<code>mksquashfs.h</code>所属的文件夹以及里面的文件需要进行一次编译之后才会产生，并且编译所以首先需要先使用<code>.\build.sh all</code>编译一次之后才能找到这个文件。第一次编译会生成一个这个头文件，修改完成后再编译一次会生成第二个头文件，再修改一次，就可以正常编译成功了。</p>
+<p>需要注意的是<code>mksquashfs.h</code>所属的文件夹以及里面的文件需要进行一次编译之后才会生成，所以首先需要使用<code>.\build.sh all</code>脚本编译一次之后才能找到这个文件。第一次编译会生成一个这个头文件，修改完成后再编译一次会生成第二个头文件，再修改一次，就可以正常编译成功了。</p>
 <p>因为这个两个文件是使用SDK的构建脚本自动生成，所以如果使用<code>build.py</code>脚本的其他命令导致这两个文件被重新生成了，可能需要再次按照上述方式修改。是否有一步到位的方法，暂时不清楚。</p>
 <p>修改完成后，需要先手动删除同级目录下的<code>process_fragments.o</code>，否则还是会报上面的错误。</p>
-<p>吐槽一下，瑞芯微的SDK真是非常非常的臃肿，超级大。第一编译的时间特别九，需要耐心等待。真是苦了我的老神船了。</p>
+<p>吐槽一下，瑞芯微的SDK真是非常非常的臃肿，超级大。第一编译的时间特别久，需要耐心等待。真是苦了我的老神船了。</p>
 <p><img src="/2024/11/17/RT-Thread/image-20241117183606186.png" alt="image-20241117183606186"></p>
 <p>插播一条猫猫（可恶，下次让他去上班）。</p>
-<h2 id="运行RT-Thread"><a href="#运行RT-Thread" class="headerlink" title="运行RT-Thread"></a>运行RT-Thread</h2><p>Linux顺利运行后，接下来就要开始尝试运行RT-Thread了。</p>
+<h2 id="调整Debug串口波特率"><a href="#调整Debug串口波特率" class="headerlink" title="调整Debug串口波特率"></a>调整Debug串口波特率</h2><p>嘉立创提供的SDK中Debug串口的默认输出波特率是1500000，有些时候并其实不是特别的方便。有些软件或者串口助手不支持特别高的波特率，在后续的RT-Thread的调试过程中，基本上也都是使用115200波特率来进行调试。所以想试着尝试修改一下Debug串口的波特率。</p>
+<p>修改步骤主要参考了网上一些关于RK3568的方法，这是我参考的文章[RK3588修改调试串口的波特率]<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_40768997/article/details/139785257">https://blog.csdn.net/weixin_40768997/article/details/139785257</a>)</p>
+<p>RK3566和RK3568的启动分为三个阶段，分别是BootRam阶段，Uboot阶段以及Linux阶段。所以就需要将这几个阶段的Debug串口的波特率全部修改成一致的波特率。否则就会出现一会儿乱码一会儿正常的情况。</p>
+<h3 id="BootRam"><a href="#BootRam" class="headerlink" title="BootRam"></a>BootRam</h3><p>按照同样的方法，首先进入<code>/rkbin/RKBOOT</code>目录下找到<code>RK3366MINIALL.ini</code>文件。</p>
+<p><img src="/2024/11/17/RT-Thread/ba529b964dc3fd7495d7543f39e6fd60.png" alt="ba529b964dc3fd7495d7543f39e6fd60"></p>
+<p>接着使用<code>cat</code>命令查看使用的是那个ddrbin文件。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rk3566_ddr_1056MHz_v1.13.bin</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2024/11/17/RT-Thread/e078448852cc3aec4350330b7f05ccb4.png" alt="e078448852cc3aec4350330b7f05ccb4"></p>
+<p>使用<code>find ../ -name rk3566_ddr_1056MHz_v1.13.bin</code>命令找到<code>rk3566_ddr_1056MHz_v1.13.bin</code>文件所在的路径，这个路径后面会用到。</p>
+<p><img src="/2024/11/17/RT-Thread/image-20241123175730997.png" alt="image-20241123175730997"></p>
+<p>修改<code>rkbin/tools/ddrbin_param.txt</code>文件中的<code>uart baudrate</code>参数。</p>
+<p><img src="/2024/11/17/RT-Thread/image-20241123181447615.png" alt="image-20241123181447615"></p>
+<p>执行命令重新生成<code>rk3566_ddr_1056MHz_v1.13.bin</code>文件。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./ddrbin_tool ddrbin_param.txt ../bin/rk35/rk3566_ddr_1056MHz_v1.13.bin</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2024/11/17/RT-Thread/image-20241123181958821.png" alt="image-20241123181958821"></p>
+<h3 id="UBoot"><a href="#UBoot" class="headerlink" title="UBoot"></a>UBoot</h3><h3 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h3><h1 id="RT-Thread篇"><a href="#RT-Thread篇" class="headerlink" title="RT-Thread篇"></a>RT-Thread篇</h1><h2 id="运行RT-Thread"><a href="#运行RT-Thread" class="headerlink" title="运行RT-Thread"></a>运行RT-Thread</h2><p>Linux顺利运行后，接下来就要开始尝试运行RT-Thread了。</p>
 <p>翻了一下<a target="_blank" rel="noopener" href="https://gitee.com/rtthread/rt-thread/tree/master/bsp/rockchip">RT-Thread的官方仓库</a>，发现RTT官方适配过RK3568。因为RK3566其实和RK3568差不多，所以接下来就是尝试一下能不能直接将RTT在这个板子上跑起来。</p>
 <p><img src="/2024/11/17/RT-Thread/image-20241117183957575.png" alt="image-20241117183957575"></p>
 <p>进入RK3568的BSP文件目录下，右键在此打开RTT ENV工具，输入<code>scons -j16</code>，尝试编译一下。需要注意的是，RT-Thread5.0新版的对老版本的ENV支持得不是很好，所以为了避免麻烦，将ENV升级到了2.0。</p>
