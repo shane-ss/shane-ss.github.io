@@ -171,12 +171,13 @@
 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>前段时间，工作上一直有接触Linux和RTOS的混合部署方案，感觉非常有趣，于是产生了学习和探索这方面技术的兴趣。</p>
 <p>为了方便学习，最近一直在寻找一款开发板，用来摸索这方面的技术。各种论坛上搜索了一圈，最终看上了<strong>泰山派</strong>这款开发板。</p>
 <p>选择它的理由有很多，主要是因为它是一款非常Open的开发板，嘉立创将这款开发板的原理图、PCB完全开源，立创开源社区在国内也是十分活跃，用户很多，什么实力不用多说。其次这款开发板的主控用的是阉割版的RK3568（RK3566），各项性能和外设资源也都完全满足学习的要求，并且瑞芯微的资料也比较开放和详细。另外RT-Thread官方对RK3568进行了适配（OpenAMP方案），减少了移植RTT的工作。关于Linux，有瑞星微官方和各路开源大神的支持，也不算太慌。所以接下来，只需要专心研究如何同时运行Linux和RT-Thread即可。</p>
-<p>文章中若有错误或问题欢迎联系：<a href="mailto:&#x32;&#52;&#50;&#51;&#x37;&#x35;&#57;&#56;&#x31;&#55;&#64;&#113;&#x71;&#x2e;&#99;&#x6f;&#x6d;">&#x32;&#52;&#50;&#51;&#x37;&#x35;&#57;&#56;&#x31;&#55;&#64;&#113;&#x71;&#x2e;&#99;&#x6f;&#x6d;</a></p>
+<p>文章中若有错误或问题欢迎联系：<a href="mailto:&#x32;&#x34;&#x32;&#x33;&#55;&#53;&#x39;&#56;&#x31;&#55;&#64;&#x71;&#113;&#46;&#99;&#x6f;&#109;">&#x32;&#x34;&#x32;&#x33;&#55;&#53;&#x39;&#56;&#x31;&#55;&#64;&#x71;&#113;&#46;&#99;&#x6f;&#109;</a></p>
 <h1 id="闲言碎语"><a href="#闲言碎语" class="headerlink" title="闲言碎语"></a>闲言碎语</h1><p>这个章节是我用来记录在学习的过程中突发的一些感悟，或者一些奇奇怪怪的想法，所以，如果后来有幸有同学准备读这篇文章的时候，可以忽略掉这一章。</p>
 <p>其实在以前从来没有认真的去整理学习一项新的技术或知识的过程，以至于在学习完成后，在想去复盘的时候完全不知道如何开始，学习的过程迷迷糊糊的就结束了。所以打算将接下来的学习一步一步的记录下来，方便自己复盘和反思不足。</p>
 <p>其实本来这篇文章我想以时间线的顺序记录每个任务点的，但是想了想，还是算了，主要是自己太菜了（菜就多练），保不齐这次学习需要多久，哈哈哈。</p>
 <p>我在想，要不要事无巨细的将学习和开发过程记录下来。假如，我是说假如，将来有人不幸打算来看这篇文章，哪里面参杂太多的废话岂不是让读的人很痛苦哈哈哈。管他的呢，因该没人会来看。</p>
 <p>很早之前一直也想像那些大神一样创建一个自己的博客，用来记录或者分享技术。但是由于各种原因，期间也尝试过最终都以失败告终。刚才突然思考了一些失败的原因，核心原因还是自己太懒来了，坚持不下去。</p>
+<p>当我尝试写这篇文章或者说尝试通过文字去记录某件事儿的学习过程的时候，文章中的内容顺序和本身学习的顺序其实是有差异的。真正的学习过程中会踩很多的坑，走很多弯路，浪费很多时间。在写文章的时候往往是一个梳理逻辑的过程，所以看起来十分的顺利。但是当我回过头来看这篇文章的时候我就在想，如果我不知道这些东西的情况下按照这些步骤一步一步的进行，太过于顺利反而会让我感觉无趣。哈哈哈，可能这就是探索的意义所在吧。</p>
 <h1 id="Linux篇"><a href="#Linux篇" class="headerlink" title="Linux篇"></a>Linux篇</h1><h2 id="编译Linux"><a href="#编译Linux" class="headerlink" title="编译Linux"></a>编译Linux</h2><p>拿到开发板后，第一个任务就是将开发板运行起来。</p>
 <p>嘉立创将各种资源和文档进行了整理，全部都放在了 <a target="_blank" rel="noopener" href="https://wiki.lckfb.com/zh-hans/tspi-rk3566/">泰山派文档中心</a>。</p>
 <p>泰山派Linux的编译过程比较简单，因为本身瑞芯微的资料还算成熟，在实际的操作过程中几乎没有遇到什么困难。按照官方文档将SDK下载到Ubuntu18.04中，配置好相关的环境之后，静静等待编译就行了，编译时间比较长。</p>
@@ -186,8 +187,8 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">报错：</span><br><span class="line">	multiple definition of &#x27;&#x27;fwriter_buffer&#x27;&#x27;;</span><br><span class="line">	multiple definition of &#x27;&#x27;bwriter_buffer&#x27;&#x27;;</span><br></pre></td></tr></table></figure>
 
 <p><img src="/2024/11/17/RT-Thread/784965773ba03b5737db7206bdeaf48b_720.png" alt="784965773ba03b5737db7206bdeaf48b_720"></p>
-<p>这个问题是由于 <code>fwriter_buffer</code> 和 <code>bwriter_buffer</code> 出现了重复定义，解决方式就是修改<code>mksquashfs.h</code>文件的136行，加上extern修饰。</p>
-<p>使用命令查找<code>mksquashfs.h</code>文件路径，可以找到两个文件路径，统统按照下面的方法修改掉就行了。</p>
+<p>这个问题是由于 <code>fwriter_buffer</code> 和 <code>bwriter_buffer</code> 出现了重复定义，解决方式就是修改<strong>mksquashfs.h</strong>文件的136行，加上extern修饰。</p>
+<p>使用命令查找<strong>mksquashfs.h</strong>文件路径，可以找到两个文件路径，统统按照下面的方法修改掉就行了。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find -name mksquashfs.h</span><br></pre></td></tr></table></figure>
 
 <p><img src="/2024/11/17/RT-Thread/image-20241123150921520.png" alt="image-20241123150921520"></p>
@@ -195,21 +196,21 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">extern</span> <span class="class"><span class="keyword">struct</span> <span class="title">cache</span> *<span class="title">bwriter_buffer</span>, *<span class="title">fwriter_buffer</span>;</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/2024/11/17/RT-Thread/c44f78a23856e5d2339b76b1cf35dbee.png" alt="c44f78a23856e5d2339b76b1cf35dbee"></p>
-<p>需要注意的是！！！<code>mksquashfs.h</code>所属的文件夹以及里面的文件需要进行一次编译之后才会生成，所以首先需要使用<code>.\build.sh all</code>脚本全编译一次之后才能找到这个文件。第一次编译会生成一个这个头文件，修改完成后需要删除同级目录下的<code>process_fragments.o</code>文件，否则编译还是依然报错，然后再编译一次会生成第二个头文件，同理按照刚才的方法，再修改一次，就可以正常编译成功了。</p>
-<p>因为这个两个文件是使用SDK的构建脚本自动生成，所以如果使用<code>build.py</code>脚本的其他命令导致这两个文件被重新生成了，可能需要再次按照上述方式修改。是否有一步到位的方法，暂时不清楚。</p>
+<p>需要注意的是！！！mksquashfs.h所属的文件夹以及里面的文件需要进行一次编译之后才会生成，所以首先需要使用<code>.\build.sh all</code>脚本全编译一次之后才能找到这个文件。第一次编译会生成一个这个头文件，修改完成后需要删除同级目录下的<strong>process_fragments.o</strong>文件，否则编译还是依然报错，然后再编译一次会生成第二个头文件，同理按照刚才的方法，再修改一次，就可以正常编译成功了。</p>
+<p>因为这个两个文件是使用SDK的构建脚本自动生成，所以如果使用build.py脚本的其他命令导致这两个文件被重新生成了，可能需要再次按照上述方式修改。是否有一步到位的方法，暂时不清楚。</p>
 <p>吐槽一下，瑞芯微的SDK真是非常非常的臃肿，超级大。第一编译的时间特别久，需要耐心等待。真是苦了我的老神船了。</p>
 <h2 id="调整Debug串口波特率"><a href="#调整Debug串口波特率" class="headerlink" title="调整Debug串口波特率"></a>调整Debug串口波特率</h2><p>嘉立创提供的SDK中Debug串口默认输出波特率是1500000，有些时候并其实不是特别的方便。有些软件或者串口助手不支持特别高的波特率，在后续的RT-Thread的调试过程中，基本上也都是使用115200波特率来进行调试。所以想试着尝试修改一下Debug串口的波特率。</p>
-<p>修改步骤主要参考了网上一些关于RK3568的方法，这是我参考的文章[RK3588修改调试串口的波特率]<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_40768997/article/details/139785257)%EF%BC%8C%E5%85%B6%E5%AE%9E%E6%96%B9%E6%B3%95%E9%83%BD%E4%B8%80%E6%A0%B7%E5%8F%AA%E6%98%AF%E6%8A%8ARK3568%E7%9B%B8%E5%85%B3%E7%9A%84%E6%96%87%E4%BB%B6%E6%8D%A2%E6%88%90RK3566%E5%B0%B1%E8%A1%8C%E4%BA%86%E3%80%82">https://blog.csdn.net/weixin_40768997/article/details/139785257)，其实方法都一样只是把RK3568相关的文件换成RK3566就行了。</a></p>
+<p>修改步骤主要参考了网上一些关于RK3568的方法，这是我参考的文章<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_40768997/article/details/139785257">RK3588修改调试串口的波特率</a>，其实方法都一样只是把RK3568相关的文件换成RK3566就行了。</p>
 <p>RK3566和RK3568的启动分为三个阶段，分别是BootRam阶段，Uboot阶段以及Linux阶段。所以就需要将这几个阶段的Debug串口的波特率全部修改成一致的波特率。否则就会出现一会儿乱码一会儿正常的情况。</p>
 <h3 id="BootRam"><a href="#BootRam" class="headerlink" title="BootRam"></a>BootRam</h3><p>1、首先进入<code>/rkbin/RKBOOT</code>目录下找到<code>RK3366MINIALL.ini</code>文件。</p>
 <p><img src="/2024/11/17/RT-Thread/ba529b964dc3fd7495d7543f39e6fd60.png" alt="ba529b964dc3fd7495d7543f39e6fd60"></p>
 <p>接着使用<code>cat</code>命令打印出这个文件内容查看使用的是那个ddrbin文件。</p>
 <p><img src="/2024/11/17/RT-Thread/e078448852cc3aec4350330b7f05ccb4.png" alt="e078448852cc3aec4350330b7f05ccb4"></p>
-<p>2、使用<code>find ../ -name rk3566_ddr_1056MHz_v1.13.bin</code>命令找到<code>rk3566_ddr_1056MHz_v1.13.bin</code>文件所在的路径，这个路径后面会用到。</p>
+<p>2、使用<code>find ../ -name rk3566_ddr_1056MHz_v1.13.bin</code>命令找到<strong>rk3566_ddr_1056MHz_v1.13.bin</strong>文件所在的路径，这个路径后面会用到。</p>
 <p><img src="/2024/11/17/RT-Thread/image-20241123175730997.png" alt="image-20241123175730997"></p>
-<p>3、修改<code>rkbin/tools/ddrbin_param.txt</code>文件中的<code>uart baudrate</code>参数。</p>
+<p>3、修改<strong>rkbin&#x2F;tools&#x2F;ddrbin_param.txt</strong>文件中的<code>uart baudrate</code>参数。</p>
 <p><img src="/2024/11/17/RT-Thread/image-20241123181447615.png" alt="image-20241123181447615"></p>
-<p>4、执行命令重新生成<code>rk3566_ddr_1056MHz_v1.13.bin</code>文件。</p>
+<p>4、执行命令重新生成<strong>rk3566_ddr_1056MHz_v1.13.bin</strong>文件。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./ddrbin_tool ddrbin_param.txt ../bin/rk35/rk3566_ddr_1056MHz_v1.13.bin</span><br></pre></td></tr></table></figure>
 
 <p><img src="/2024/11/17/RT-Thread/image-20241123181958821.png" alt="image-20241123181958821"></p>
@@ -220,15 +221,15 @@
 <p>2、使用<code>./make.sh rk3566</code>命令重新配置Uboot。</p>
 <p><img src="/2024/11/17/RT-Thread/image-20241124092206141.png" alt="image-20241124092206141"></p>
 <h3 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h3><p>Linux下修改一下设备树，将Debug串口的波特率修改成115200即可。</p>
-<p>1、进入<code>kernel/arch/arm64/boot/dts/rockchip/</code>目录下，找到<code>tspi-rk3566-core-v10.dtsi</code>文件。修改<code>fiq-debugger</code>节点中的波特率设置。</p>
+<p>1、进入<strong>kernel&#x2F;arch&#x2F;arm64&#x2F;boot&#x2F;dts&#x2F;rockchip&#x2F;<strong>目录下，找到</strong>tspi-rk3566-core-v10.dtsi</strong>文件。修改<code>fiq-debugger</code>节点中的波特率设置。</p>
 <p><img src="/2024/11/17/RT-Thread/image-20241124093658744.png" alt="image-20241124093658744"></p>
 <h3 id="完成"><a href="#完成" class="headerlink" title="完成"></a>完成</h3><p>完成修改后，重新烧录固件即可。</p>
 <h2 id="配置Ftp自动下载RTT固件"><a href="#配置Ftp自动下载RTT固件" class="headerlink" title="配置Ftp自动下载RTT固件"></a>配置Ftp自动下载RTT固件</h2><p>在后面的RT-Thread的开发中，我们需要经常烧录RT-Thread固件到开发板中运行。烧录的方式有很多，可以使用瑞芯微的下载工具或者直接使用Uboot从Ftp上下载固件引导过去运行。最方便的方式就是使用后者，我们只需要配置好相关的环境和参数后就可以一键下载和引导RT-Thread，为后续的开发提高了效率。</p>
 <p>1、嘉立创提供的Uboot修改过，无法在启动的时候进入Uboot，所以这里首先需要设置一下，保证我们能让Uboot暂停下来。</p>
-<p>同样找到<code>rk3568_defconfig</code>文件，在<code>u-boot\configs</code> 目录下 。修改配置项<code>CONFIG_BOOTDELAY</code>，可根据自己的需要修改，我这里设置的是等待1s。</p>
+<p>同样找到<strong>rk3568_defconfig</strong>文件，在<strong>u-boot\configs</strong> 目录下 。修改配置项<code>CONFIG_BOOTDELAY</code>，可根据自己的需要修改，我这里设置的是等待1s。</p>
 <p><img src="/2024/11/17/RT-Thread/image-20241124100429713.png" alt="image-20241124100429713"></p>
 <p>2、默认的Uboot没有打开以太网驱动，因为后面需要使用网口与电脑的Ftp服务器通信，所以还需要将网口驱动打开。</p>
-<p>将泰山派的<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1HtnpytCBBqBOqZi8mfV4VQ?pwd=qcxx#list/path=%2F%E7%AB%8B%E5%88%9B%C2%B7%E6%B3%B0%E5%B1%B1%E6%B4%BE%E5%BC%80%E5%8F%91%E6%9D%BF%E8%B5%84%E6%96%99%2F%E7%AC%AC09%E7%AB%A0.%E3%80%90%E7%AB%8B%E5%88%9B%C2%B7%E6%B3%B0%E5%B1%B1%E6%B4%BE%E3%80%91%E9%A1%B9%E7%9B%AE%E6%A1%88%E4%BE%8B%2F%E3%80%90%E5%BA%95%E9%83%A8%E6%89%A9%E5%B1%95%E6%9D%BF%E3%80%91%E9%A1%B9%E7%9B%AE%E8%B5%84%E6%96%99%2F%E3%80%90%E5%BA%95%E9%83%A839%E8%84%9A%E3%80%914G_HUB2.0_ET100_HS%E6%89%A9%E5%B1%95%E6%9D%BF%2FLinux%E5%9B%BA%E4%BB%B6%2F%E8%A1%A5%E4%B8%8120240620">网口扩展板补丁（密码：qcxx）</a>下载放到SDK的<code>Kernel</code>目录下，然后执行：</p>
+<p>将泰山派的<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1HtnpytCBBqBOqZi8mfV4VQ?pwd=qcxx#list/path=%2F%E7%AB%8B%E5%88%9B%C2%B7%E6%B3%B0%E5%B1%B1%E6%B4%BE%E5%BC%80%E5%8F%91%E6%9D%BF%E8%B5%84%E6%96%99%2F%E7%AC%AC09%E7%AB%A0.%E3%80%90%E7%AB%8B%E5%88%9B%C2%B7%E6%B3%B0%E5%B1%B1%E6%B4%BE%E3%80%91%E9%A1%B9%E7%9B%AE%E6%A1%88%E4%BE%8B%2F%E3%80%90%E5%BA%95%E9%83%A8%E6%89%A9%E5%B1%95%E6%9D%BF%E3%80%91%E9%A1%B9%E7%9B%AE%E8%B5%84%E6%96%99%2F%E3%80%90%E5%BA%95%E9%83%A839%E8%84%9A%E3%80%914G_HUB2.0_ET100_HS%E6%89%A9%E5%B1%95%E6%9D%BF%2FLinux%E5%9B%BA%E4%BB%B6%2F%E8%A1%A5%E4%B8%8120240620">网口扩展板补丁（密码：qcxx）</a>下载放到SDK的<strong>Kernel</strong>目录下，然后执行：</p>
 <p><img src="/2024/11/17/RT-Thread/image-20241124120800888.png" alt="image-20241124120800888"></p>
 <p><img src="/2024/11/17/RT-Thread/image-20241124120933141.png" alt="image-20241124120933141"></p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">patch -p1 &lt; kernel.patch</span><br></pre></td></tr></table></figure>
