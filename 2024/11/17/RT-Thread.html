@@ -171,14 +171,14 @@
 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>前段时间，工作上一直有接触Linux和RTOS的混合部署方案，感觉非常有趣，于是产生了学习和探索这方面技术的兴趣。</p>
 <p>为了方便学习，最近一直在寻找一款开发板，用来摸索这方面的技术。各种论坛上搜索了一圈，最终看上了<strong>泰山派</strong>这款开发板。</p>
 <p>选择它的理由有很多，主要是因为它是一款非常Open的开发板，嘉立创将这款开发板的原理图、PCB完全开源，立创开源社区在国内也是十分活跃，用户很多，什么实力不用多说。其次这款开发板的主控用的是阉割版的RK3568（RK3566），各项性能和外设资源也都完全满足学习的要求，并且瑞芯微的资料也比较开放和详细。另外RT-Thread官方对RK3568进行了适配（OpenAMP方案），减少了移植RTT的工作。关于Linux，有瑞星微官方和各路开源大神的支持，也不算太慌。所以接下来，只需要专心研究如何同时运行Linux和RT-Thread即可。</p>
-<p>文章中若有错误或问题欢迎联系：<a href="mailto:&#x32;&#52;&#x32;&#51;&#55;&#53;&#57;&#x38;&#49;&#x37;&#x40;&#113;&#x71;&#x2e;&#99;&#x6f;&#109;">&#x32;&#52;&#x32;&#51;&#55;&#53;&#57;&#x38;&#49;&#x37;&#x40;&#113;&#x71;&#x2e;&#99;&#x6f;&#109;</a></p>
+<p>文章中若有错误或问题欢迎联系：<a href="mailto:&#50;&#52;&#50;&#x33;&#x37;&#x35;&#57;&#56;&#x31;&#55;&#x40;&#113;&#113;&#46;&#99;&#x6f;&#x6d;">&#50;&#52;&#50;&#x33;&#x37;&#x35;&#57;&#56;&#x31;&#55;&#x40;&#113;&#113;&#46;&#99;&#x6f;&#x6d;</a></p>
 <h1 id="闲言碎语"><a href="#闲言碎语" class="headerlink" title="闲言碎语"></a>闲言碎语</h1><p>这个章节是我用来记录在学习的过程中突发的一些感悟，或者一些奇奇怪怪的想法，所以，如果后来有幸有同学准备读这篇文章的时候，可以忽略掉这一章。</p>
 <p>其实在以前从来没有认真的去整理学习一项新的技术或知识的过程，以至于在学习完成后，在想去复盘的时候完全不知道如何开始，学习的过程迷迷糊糊的就结束了。所以打算将接下来的学习一步一步的记录下来，方便自己复盘和反思不足。</p>
 <p>其实本来这篇文章我想以时间线的顺序记录每个任务点的，但是想了想，还是算了，主要是自己太菜了（菜就多练），保不齐这次学习需要多久，哈哈哈。</p>
 <p>我在想，要不要事无巨细的将学习和开发过程记录下来。假如，我是说假如，将来有人不幸打算来看这篇文章，哪里面参杂太多的废话岂不是让读的人很痛苦哈哈哈。管他的呢，因该没人会来看。</p>
 <p>很早之前一直也想像那些大神一样创建一个自己的博客，用来记录或者分享技术。但是由于各种原因，期间也尝试过最终都以失败告终。刚才突然思考了一些失败的原因，核心原因还是自己太懒来了，坚持不下去。</p>
 <p>当我尝试写这篇文章或者说尝试通过文字去记录某件事儿的学习过程的时候，文章中的内容顺序和本身学习的顺序其实是有差异的。真正的学习过程中会踩很多的坑，走很多弯路，浪费很多时间。在写文章的时候往往是一个梳理逻辑的过程，所以看起来十分的顺利。但是当我回过头来看这篇文章的时候我就在想，如果我不知道这些东西的情况下按照这些步骤一步一步的进行，太过于顺利反而会让我感觉无趣。哈哈哈，可能这就是探索的意义所在吧。</p>
-<h1 id="Linux篇"><a href="#Linux篇" class="headerlink" title="Linux篇"></a>Linux篇</h1><h2 id="编译Linux"><a href="#编译Linux" class="headerlink" title="编译Linux"></a>编译Linux</h2><p>拿到开发板后，第一个任务就是将开发板运行起来。</p>
+<h1 id="编译Linux"><a href="#编译Linux" class="headerlink" title="编译Linux"></a>编译Linux</h1><p>拿到开发板后，第一个任务就是将开发板运行起来。</p>
 <p>嘉立创将各种资源和文档进行了整理，全部都放在了 <a target="_blank" rel="noopener" href="https://wiki.lckfb.com/zh-hans/tspi-rk3566/">泰山派文档中心</a>。</p>
 <p>泰山派Linux的编译过程比较简单，因为本身瑞芯微的资料还算成熟，在实际的操作过程中几乎没有遇到什么困难。按照官方文档将SDK下载到Ubuntu18.04中，配置好相关的环境之后，静静等待编译就行了，编译时间比较长。</p>
 <p>由于瑞芯微提供的SDK的开发环境是Ubuntu18.04， 而Ubuntu18.04已经停止维护了，所以为了兼容我的其他项目环境，需要将Ubuntu切换成22.04的版本。然而目前的SDK在Ubuntu22.04上存在许多兼容性问题，可能导致编译失败。不过幸运的是嘉立创的文档中有提到如何解决在Ubuntu22.04上编译的一系列问题。一键直达<a target="_blank" rel="noopener" href="https://wiki.lckfb.com/zh-hans/tspi-rk3566/documentation/gj-ubuntu-22-04-lts-compile.html">立创·泰山派RK3566开发 Ubuntu 22.04LTS编译</a>。</p>
@@ -199,10 +199,10 @@
 <p>需要注意的是！！！mksquashfs.h所属的文件夹以及里面的文件需要进行一次编译之后才会生成，所以首先需要使用<code>.\build.sh all</code>脚本全编译一次之后才能找到这个文件。第一次编译会生成一个这个头文件，修改完成后需要删除同级目录下的<strong>process_fragments.o</strong>文件，否则编译还是依然报错，然后再编译一次会生成第二个头文件，同理按照刚才的方法，再修改一次，就可以正常编译成功了。</p>
 <p>因为这个两个文件是使用SDK的构建脚本自动生成，所以如果使用build.py脚本的其他命令导致这两个文件被重新生成了，可能需要再次按照上述方式修改。是否有一步到位的方法，暂时不清楚。</p>
 <p>吐槽一下，瑞芯微的SDK真是非常非常的臃肿，超级大。第一编译的时间特别久，需要耐心等待。真是苦了我的老神船了。</p>
-<h2 id="调整Debug串口波特率"><a href="#调整Debug串口波特率" class="headerlink" title="调整Debug串口波特率"></a>调整Debug串口波特率</h2><p>嘉立创提供的SDK中Debug串口默认输出波特率是1500000，有些时候并其实不是特别的方便。有些软件或者串口助手不支持特别高的波特率，在后续的RT-Thread的调试过程中，基本上也都是使用115200波特率来进行调试。所以想试着尝试修改一下Debug串口的波特率。</p>
+<h1 id="调整Debug串口波特率"><a href="#调整Debug串口波特率" class="headerlink" title="调整Debug串口波特率"></a>调整Debug串口波特率</h1><p>嘉立创提供的SDK中Debug串口默认输出波特率是1500000，有些时候并其实不是特别的方便。有些软件或者串口助手不支持特别高的波特率，在后续的RT-Thread的调试过程中，基本上也都是使用115200波特率来进行调试。所以想试着尝试修改一下Debug串口的波特率。</p>
 <p>修改步骤主要参考了网上一些关于RK3568的方法，这是我参考的文章<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_40768997/article/details/139785257">RK3588修改调试串口的波特率</a>，其实方法都一样只是把RK3568相关的文件换成RK3566就行了。</p>
 <p>RK3566和RK3568的启动分为三个阶段，分别是BootRam阶段，Uboot阶段以及Linux阶段。所以就需要将这几个阶段的Debug串口的波特率全部修改成一致的波特率。否则就会出现一会儿乱码一会儿正常的情况。</p>
-<h3 id="BootRam"><a href="#BootRam" class="headerlink" title="BootRam"></a>BootRam</h3><p>1、首先进入<code>/rkbin/RKBOOT</code>目录下找到<code>RK3366MINIALL.ini</code>文件。</p>
+<h2 id="BootRam"><a href="#BootRam" class="headerlink" title="BootRam"></a>BootRam</h2><p>1、首先进入<code>/rkbin/RKBOOT</code>目录下找到<code>RK3366MINIALL.ini</code>文件。</p>
 <p><img src="/2024/11/17/RT-Thread/ba529b964dc3fd7495d7543f39e6fd60.png" alt="ba529b964dc3fd7495d7543f39e6fd60"></p>
 <p>接着使用<code>cat</code>命令打印出这个文件内容查看使用的是那个ddrbin文件。</p>
 <p><img src="/2024/11/17/RT-Thread/e078448852cc3aec4350330b7f05ccb4.png" alt="e078448852cc3aec4350330b7f05ccb4"></p>
@@ -214,17 +214,17 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./ddrbin_tool ddrbin_param.txt ../bin/rk35/rk3566_ddr_1056MHz_v1.13.bin</span><br></pre></td></tr></table></figure>
 
 <p><img src="/2024/11/17/RT-Thread/image-20241123181958821.png" alt="image-20241123181958821"></p>
-<h3 id="UBoot"><a href="#UBoot" class="headerlink" title="UBoot"></a>UBoot</h3><p>其实经过我的测试，修改完BootRam中的波特率后就可以使用了，不用再修改Uboot中的波特率。虽然Uboot中Debug串口设置的波特率任然是1500000，猜测Uboot中并没有成功初始化串口或者压根就没有初始化，所以使用的配置还是BootRam阶段的波特率。</p>
+<h2 id="UBoot"><a href="#UBoot" class="headerlink" title="UBoot"></a>UBoot</h2><p>其实经过我的测试，修改完BootRam中的波特率后就可以使用了，不用再修改Uboot中的波特率。虽然Uboot中Debug串口设置的波特率任然是1500000，猜测Uboot中并没有成功初始化串口或者压根就没有初始化，所以使用的配置还是BootRam阶段的波特率。</p>
 <p>但是如果依然没有成功，可以按照下面的方式设置一下Uboot中的波特率配置。</p>
 <p>1、找到<code>rk3568_defconfig</code>文件，在<code>u-boot\configs</code> 目录下 。修改配置项<code>CONFIG_BAUDRATE</code>为115200即可。</p>
 <p><img src="/2024/11/17/RT-Thread/image-20241124091545986.png" alt="image-20241124091545986"></p>
 <p>2、使用<code>./make.sh rk3566</code>命令重新配置Uboot。</p>
 <p><img src="/2024/11/17/RT-Thread/image-20241124092206141.png" alt="image-20241124092206141"></p>
-<h3 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h3><p>Linux下修改一下设备树，将Debug串口的波特率修改成115200即可。</p>
+<h2 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h2><p>Linux下修改一下设备树，将Debug串口的波特率修改成115200即可。</p>
 <p>1、进入<strong>kernel&#x2F;arch&#x2F;arm64&#x2F;boot&#x2F;dts&#x2F;rockchip&#x2F;<strong>目录下，找到</strong>tspi-rk3566-core-v10.dtsi</strong>文件。修改<code>fiq-debugger</code>节点中的波特率设置。</p>
 <p><img src="/2024/11/17/RT-Thread/image-20241124093658744.png" alt="image-20241124093658744"></p>
-<h3 id="完成"><a href="#完成" class="headerlink" title="完成"></a>完成</h3><p>完成修改后，重新烧录固件即可。</p>
-<h2 id="配置TFTP自动下载RTT固件"><a href="#配置TFTP自动下载RTT固件" class="headerlink" title="配置TFTP自动下载RTT固件"></a>配置TFTP自动下载RTT固件</h2><p>在后面的RT-Thread的开发中，我们需要经常烧录RT-Thread固件到开发板中运行。烧录的方式有很多，可以使用瑞芯微的下载工具或者直接使用Uboot从TFTP上下载固件引导过去运行。最方便的方式就是使用后者，我们只需要配置好相关的环境和参数后就可以一键下载和引导RT-Thread，为后续的开发提高了效率。</p>
+<h2 id="完成"><a href="#完成" class="headerlink" title="完成"></a>完成</h2><p>完成修改后，重新烧录固件即可。</p>
+<h1 id="配置TFTP自动下载RTT固件"><a href="#配置TFTP自动下载RTT固件" class="headerlink" title="配置TFTP自动下载RTT固件"></a>配置TFTP自动下载RTT固件</h1><p>在后面的RT-Thread的开发中，我们需要经常烧录RT-Thread固件到开发板中运行。烧录的方式有很多，可以使用瑞芯微的下载工具或者直接使用Uboot从TFTP上下载固件引导过去运行。最方便的方式就是使用后者，我们只需要配置好相关的环境和参数后就可以一键下载和引导RT-Thread，为后续的开发提高了效率。</p>
 <p>1、嘉立创提供的Uboot修改过，无法在启动的时候进入Uboot，所以这里首先需要设置一下，保证我们能让Uboot暂停下来。</p>
 <p>同样找到<strong>rk3568_defconfig</strong>文件，在<strong>u-boot\configs</strong> 目录下 。修改配置项<code>CONFIG_BOOTDELAY</code>，可根据自己的需要修改，我这里设置的是等待1s。</p>
 <p><img src="/2024/11/17/RT-Thread/image-20241124100429713.png" alt="image-20241124100429713"></p>
@@ -264,7 +264,7 @@
 <p>上面的这些配置是根据我的开发环境来设置的，比如我的开发板是用网线连接到我的电脑上，因此TFTP服务器在我的电脑上，我的电脑上网口的IP是192.168.1.3，所以这里<strong>serverip</strong>设置的就是我的电脑的网口IP地址，为了保证板子和电脑在同一个网段，所以<strong>ipaddr</strong>设置的是192.168.1.2。后续调试RT-Thread的时候我一般是将固件下载到0x280000这个地址然后从这里启动，所以这里<strong>bootcmd</strong>设置的地址是0x280000，包括后面的<strong>go</strong>命令跟的地址也是0x280000。</p>
 <p>6、接下来就可以将TFTP服务器启动，然后摁一下板子的复位键一键下载并启动RT-Thread了。</p>
 <p><img src="/2024/11/17/RT-Thread/image-20241124124556426.png" alt="image-20241124124556426"></p>
-<h1 id="RT-Thread篇"><a href="#RT-Thread篇" class="headerlink" title="RT-Thread篇"></a>RT-Thread篇</h1><h2 id="运行RT-Thread"><a href="#运行RT-Thread" class="headerlink" title="运行RT-Thread"></a>运行RT-Thread</h2><p>Linux顺利运行后，接下来就要开始着手尝试运行RT-Thread了。</p>
+<h1 id="运行RT-Thread"><a href="#运行RT-Thread" class="headerlink" title="运行RT-Thread"></a>运行RT-Thread</h1><p>Linux顺利运行后，接下来就要开始着手尝试运行RT-Thread了。</p>
 <p>浏览了一下<a target="_blank" rel="noopener" href="https://gitee.com/rtthread/rt-thread/tree/master/bsp/rockchip">RT-Thread的官方仓库</a>，发现RTT官方适配过RK3568。RK3566和RK3568类似，所以接下来就是尝试一下能不能直接将RTT在这个板子上跑起来。</p>
 <p><img src="/2024/11/17/RT-Thread/image-20241117183957575.png" alt="image-20241117183957575"></p>
 <p>进入RK3568的BSP文件目录下，右键在此打开RTT ENV工具，输入<code>scons -j16</code>，尝试编译一下。需要注意的是，RT-Thread5.0新版的对老版本的ENV支持得不是很好，所以为了避免麻烦，将ENV升级到了2.0。</p>
@@ -275,16 +275,16 @@
 <p><img src="/2024/11/17/RT-Thread/image-20241117191915761.png" alt="image-20241117191915761"></p>
 <p>工具链下载完成后按照BSP中的READ_ME的提示配置好环境变量然后再次编译，编译成功，使用<code>scons --dist</code>命令打包工程即可，打包的工程存放在BSP目录下的dist文件夹下，后续可以将工程复制到任何路径下进行开发了。</p>
 <p>前面已经搭建好了自动下载的环境，接下来只需要将TFTP服务器启动起来，将RTT固件放在TFTP服务器目录下，每次重启后，都可以Uboot会自动执行命令<code>tftp 0x280000 rtthread.bin; go 0x280000</code>，从TFTP服务器上拉去RTT固件到DDR中，然后启动起来。</p>
-<h1 id="AMP"><a href="#AMP" class="headerlink" title="AMP"></a>AMP</h1><p>有了前两步的铺垫，接下来就可以正式进入AMP方面的学习与研究了。</p>
-<h2 id="关闭IO电源域配警告打印"><a href="#关闭IO电源域配警告打印" class="headerlink" title="关闭IO电源域配警告打印"></a>关闭IO电源域配警告打印</h2><p>启动Linux后，shell会定时打印<strong>IO电源域警告</strong>，非常的烦人，暂时不太清楚这个警告的作用和意义。后面有时间了再去详细研究一下RK3566的电源域配置。</p>
+<p>有了前两步的铺垫，接下来就可以正式进入AMP方面的学习与研究了。</p>
+<h1 id="关闭IO电源域配警告打印"><a href="#关闭IO电源域配警告打印" class="headerlink" title="关闭IO电源域配警告打印"></a>关闭IO电源域配警告打印</h1><p>启动Linux后，shell会定时打印<strong>IO电源域警告</strong>，非常的烦人，暂时不太清楚这个警告的作用和意义。后面有时间了再去详细研究一下RK3566的电源域配置。</p>
 <p><img src="/2024/11/17/RT-Thread/image-20241207194708126.png" alt="image-20241207194708126"></p>
 <p>注释掉****这个脚本的最后三行可以关闭这个打印。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">if [ &quot;$1&quot; = &quot;-h&quot; -o &quot;$1&quot; = &quot;--help&quot; ]; then</span><br><span class="line">        help_msg</span><br><span class="line">fi</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">chk_env</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">get_chip_id <span class="variable">$1</span></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">echo_msg <span class="string">&quot;Get CHIP ID: <span class="variable">$CHIP_ID</span>&quot;</span></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">get_iodomain_val</span></span><br></pre></td></tr></table></figure>
 
-<h2 id="Wifi配置"><a href="#Wifi配置" class="headerlink" title="Wifi配置"></a>Wifi配置</h2><p>直接使用wifi_start.sh脚本连接wifi就行。</p>
+<h1 id="Wifi配置"><a href="#Wifi配置" class="headerlink" title="Wifi配置"></a>Wifi配置</h1><p>直接使用wifi_start.sh脚本连接wifi就行。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wifi_start.sh wifi名字 wifi密码</span><br></pre></td></tr></table></figure>
 
-<h2 id="搭建NFS共享文件夹"><a href="#搭建NFS共享文件夹" class="headerlink" title="搭建NFS共享文件夹"></a>搭建NFS共享文件夹</h2><p>因为后面开发需要经常向开发板发送固件，最高效的方法是在开发板和开发的虚拟机之间搭建一个共享文件夹。这样可以大大提高效率。</p>
+<h1 id="搭建NFS共享文件夹"><a href="#搭建NFS共享文件夹" class="headerlink" title="搭建NFS共享文件夹"></a>搭建NFS共享文件夹</h1><p>因为后面开发需要经常向开发板发送固件，最高效的方法是在开发板和开发的虚拟机之间搭建一个共享文件夹。这样可以大大提高效率。</p>
 <p>关于如何搭建NFS，我参考了一下几篇文章：</p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/u010000843/article/details/115300528">快速配置NFS服务实现Linux主机与ARM开发板文件共享</a></p>
 <p>需要注意的是，泰山派的BuildRoot没有启用nfs，文件系统中没有nfs工具所需要的动态库（&#x2F;sbin&#x2F;mount.nfs、&#x2F;sbin&#x2F;mount.nfs4、&#x2F;usr&#x2F;lib&#x2F;libtirpc.so.*），挂载时会失败。因此我们需要去sdk中启用nfs工具。</p>
@@ -293,6 +293,7 @@
 <p><img src="/2024/11/17/RT-Thread/image-20241207233058913.png" alt="image-20241207233058913"></p>
 <p>退出menuconfig，输入Y保存配置即可。</p>
 <p>注意！！！！！比较奇葩的一点是，在sdk根目录下，再次输入<code>./build.sh buildroot</code>单独编译buildroot后，nfs依然没有被编译进去。原因在于，编译脚本编译buildroot时，使用的并不是我们刚才通过menuconfig配置后生成的.config文件，而使用的是**.&#x2F;buildroot&#x2F;configs&#x2F;rockchip_rk3566_defconfig**配置文件，就和linux kernel一样，所以这点还是有点坑的。因为懒得修改sdk的编译脚本，我们直接将nfs的宏加入到这个文件就行了。</p>
+<p>另外，启用了nfs工具后，编译可能报错，解决方法参考<strong>rpcbind报错</strong>小节。</p>
 <p><img src="/2024/11/17/RT-Thread/image-20241207233811056.png" alt="image-20241207233811056"></p>
 <p>最后，在sdk根目录下再次输入<code>./build.sh buildroot</code>单独编译buildroot，然后将**.&#x2F;rockdev&#x2F;rootfs.img**烧录到roofs分区即可。</p>
 <p><img src="/2024/11/17/RT-Thread/image-20241207234016553.png" alt="image-20241207234016553"></p>
@@ -301,10 +302,28 @@
 <p><img src="/2024/11/17/RT-Thread/image-20241207234219302.png" alt="image-20241207234219302"></p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount -t nfs 192.168.43.251:/home/ss/WorkSpace/nfs ./nfs/</span><br></pre></td></tr></table></figure>
 
-<h2 id="FAQ"><a href="#FAQ" class="headerlink" title="FAQ"></a>FAQ</h2><h4 id="rpcbind报错"><a href="#rpcbind报错" class="headerlink" title="rpcbind报错"></a>rpcbind报错</h4><p><img src="/2024/11/17/RT-Thread/image-20241208140700394.png" alt="image-20241208140700394"></p>
+<h1 id="PSCI"><a href="#PSCI" class="headerlink" title="PSCI"></a>PSCI</h1><p>PSCI全称Power State Coordination Interface，<strong>电源状态协调接口</strong>，是 ARM 架构的一部分，它定义了一组标准的接口和协议，用于协调处理器和系统的<strong>电源管理</strong>。PSCI 的目标是使操作系统能够与硬件平台进行交互，以便有效地管理系统的功耗和能源效率，尤其是在多核处理器和复杂的硬件架构中。</p>
+<p>PSCI的主要功能：</p>
+<ol>
+<li>处理器电源管理：PSCI 允许操作系统或固件通过标准接口管理处理器的电源状态。这包括将处理器置于不同的低功耗状态（如休眠状态）或将其完全关闭。</li>
+<li>统一的接口：PSCI 提供了一组标准的接口，使得操作系统、固件和硬件之间能够以统一的方式协调电源管理，而不依赖于特定平台的实现。它使操作系统可以独立于硬件平台进行电源管理。</li>
+<li>支持多核系统：在多核系统中，PSCI 提供了一种协调机制，使得操作系统可以管理每个核心的电源状态。例如，操作系统可以将某些核心置于低功耗状态或关闭某些核心，以降低能耗。</li>
+</ol>
+<p>PSCI 定义了一些关键的接口函数，这些函数由固件或操作系统调用，用于控制电源状态和协调处理器的电源管理。以下是一些常见的 PSCI 接口：</p>
+<ol>
+<li>CPU_ON：用于开启一个处理器核。</li>
+<li>CPU_OFF：用于关闭一个处理器核。</li>
+<li>CPU_SUSPEND：将处理器置于低功耗的挂起状态。</li>
+<li>CPU_DIE：使处理器核完全关闭。</li>
+<li>AFFINITY_INFO：获取处理器或其他硬件组件的电源状态信息。</li>
+</ol>
+<p>版本：<br>PSCI 在不同版本中有不同的功能，常见的版本包括：</p>
+<p>PSCI 0.1：基本的电源管理接口。<br>PSCI 0.2：添加了更多高级功能，例如支持多级电源管理和处理器电源状态查询。<br>受信任的操作系统（TOS）和 PSCI：<br>在一些系统中，PSCI 可能会受到受信任的操作系统（TOS）的限制。例如，TOS 可能会要求某些电源管理操作只能由它来执行，防止操作系统外部的其他软件改变电源状态。</p>
+<h1 id="AMP启动流程"><a href="#AMP启动流程" class="headerlink" title="AMP启动流程"></a>AMP启动流程</h1><p>如何在运行Linux的同时运行RTOS，常规的做法是</p>
+<h1 id="FAQ"><a href="#FAQ" class="headerlink" title="FAQ"></a>FAQ</h1><h2 id="rpcbind报错"><a href="#rpcbind报错" class="headerlink" title="rpcbind报错"></a>rpcbind报错</h2><p><img src="/2024/11/17/RT-Thread/image-20241208140700394.png" alt="image-20241208140700394"></p>
 <p><img src="/2024/11/17/RT-Thread/image-20241208141200870.png" alt="image-20241208141200870"></p>
 <p>启用了nfs工具后，rpcbind也会被启用，后续的编译过程中可能会出现如上报错。原因可能是因为编译脚本存在问题，导致rpcbind工具重复打补丁引起的，具体原因不太了解，暂时也不用去深入研究。我的解决方法是将**.&#x2F;buildroot&#x2F;package&#x2F;rpcbind&#x2F;<strong>目录下的所有</strong>patch**文件删除掉，这样就不会再次补丁。</p>
-<h2 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h2><h2 id="查找DDR可用区域"><a href="#查找DDR可用区域" class="headerlink" title="查找DDR可用区域"></a>查找DDR可用区域</h2><p>查找Linux中可用的区域，使用<code>cat /proc/iomem</code>命令查看系统内存的详细信息。其中<strong>System RAM</strong>是linux系统和应用程序的主要内存资源，操作系统确保只有那些被明确标记为“可用”的区域才会用于程序运行。所以我们可以在这些区域预留空间，但是要注意避开已经被被分配了的内存区域。</p>
+<h1 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h1><h2 id="查找DDR可用区域"><a href="#查找DDR可用区域" class="headerlink" title="查找DDR可用区域"></a>查找DDR可用区域</h2><p>查找Linux中可用的区域，使用<code>cat /proc/iomem</code>命令查看系统内存的详细信息。其中<strong>System RAM</strong>是linux系统和应用程序的主要内存资源，操作系统确保只有那些被明确标记为“可用”的区域才会用于程序运行。所以我们可以在这些区域预留空间，但是要注意避开已经被被分配了的内存区域。</p>
 <p><img src="/2024/11/17/RT-Thread/image-20241209205534827.png" alt="image-20241209205534827"></p>
 <h2 id="设备树节点"><a href="#设备树节点" class="headerlink" title="设备树节点"></a>设备树节点</h2><p>linux中一切皆文件，设备树节点也不例外。设备树节点通常保存在**&#x2F;proc&#x2F;device-tree&#x2F;**目录下。</p>
 <p><img src="/2024/11/17/RT-Thread/image-20241209210727135.png" alt="image-20241209210727135"></p>
