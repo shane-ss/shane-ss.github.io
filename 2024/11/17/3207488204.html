@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
   
-  <title>SBOTFOC - Shane</title>
+  <title>Hexo - Shane</title>
   
     <link rel="shortcut icon" href="/favicon.ico">
   
@@ -16,7 +16,7 @@
   
   
   
-  <meta property="og:title" content="SBOTFOC - Shane" />
+  <meta property="og:title" content="Hexo - Shane" />
   
   <meta property="og:type" content="article" />
   
@@ -160,39 +160,14 @@
         </div>
         
 
-        <h1 class="title">SBOTFOC</h1>
+        <h1 class="title">Hexo</h1>
     </div>
 
     <div class="divider"></div>
 
     <div class="content">
-        <h1 id="电机篇"><a href="#电机篇" class="headerlink" title="电机篇"></a>电机篇</h1><h2 id="无刷直流电机（BLDC，Brushless-DC-Motor）"><a href="#无刷直流电机（BLDC，Brushless-DC-Motor）" class="headerlink" title="无刷直流电机（BLDC，Brushless DC Motor）"></a>无刷直流电机（BLDC，Brushless DC Motor）</h2><p><strong>无刷电机</strong>本质上是<strong>直流电机</strong>的一种，因为它依然使用直流电源并依赖电流来产生磁场以驱动转子旋转。但是，它与传统的有刷直流电机不同，<strong>无刷电机不使用机械刷子和换向器</strong>，而是使用电子换向（通常由电子控制器完成）。</p>
-<p>无刷电机可以分为<strong>永磁无刷直流电机</strong>（PMBLDC）和<strong>感应式无刷直流电机</strong>（也称为无刷交流电机，通常采用电子换向）。在实际应用中，<strong>永磁无刷直流电机</strong>是最常见的类型。</p>
-<p>无刷电机通常通过<strong>电子换向器</strong>（如霍尔传感器或无传感器控制）进行换向，而不是通过机械刷子和换向器。控制方式通常采用**FOC（磁场定向控制）*<em>或*<em>PWM（脉宽调制）</em></em></p>
-<p><strong>优点：</strong></p>
-<ul>
-<li>没有刷子：没有机械刷子和换向器的摩擦，因此运行效率高，噪音低，使用寿命长。</li>
-<li>维护少：由于缺少刷子和换向器，无刷电机减少了磨损，维护需求较低。</li>
-<li>高效：无刷电机的效率通常较高，适合高性能应用。</li>
-<li>精确控制：由于使用电子控制换向，可以实现精确的速度和扭矩控制，适合动态性能要求较高的应用。</li>
-</ul>
-<h1 id="FOC控制系统"><a href="#FOC控制系统" class="headerlink" title="FOC控制系统"></a>FOC控制系统</h1><p><strong>力矩闭环（电流环）</strong>：最底层，直接控制电机的电磁转矩，通过调节定子电流实现。</p>
-<ul>
-<li>最核心的部分，也是整个系统的基础。</li>
-<li>直接控制电流 id,iqi_d, i_qid,iq。</li>
-<li>目标是生成所需的转矩 TTT，以实现速度和位置目标。</li>
-</ul>
-<p><strong>速度闭环</strong>：中间层，调节电机的转速，输出目标电流（转矩）。</p>
-<ul>
-<li>调节电机的实际速度 ωm\omega_mωm 使其跟随目标速度 ωm∗\omega_m^*ωm∗。</li>
-<li>输出目标转矩电流 iq∗i_q^*iq∗，交由力矩闭环控制。</li>
-</ul>
-<p><strong>位置闭环</strong>：顶层，调节电机的位置，输出目标速度。</p>
-<ul>
-<li>调节电机的实际位置 θ\thetaθ 使其跟随目标位置 θ∗\theta^*θ∗。</li>
-<li>输出目标速度 ωm∗\omega_m^*ωm∗，交由速度闭环控制。</li>
-</ul>
-<p>位置控制 → 速度控制 → 力矩控制 → 电流控制 → 电压调制</p>
+        <h1 id="常用指令"><a href="#常用指令" class="headerlink" title="常用指令"></a>常用指令</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">生成Html文件</span></span><br><span class="line">hexo g</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">部署到Github</span></span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure>
+
 
     </div>
 
@@ -206,7 +181,7 @@
         <p class="tags">
             
             <i class="icon"></i>
-            <a href="/tags/RT-Thread/" class="tag">#RT-Thread</a><a href="/tags/FOC/" class="tag">#FOC</a><a href="/tags/STM32F103/" class="tag">#STM32F103</a>
+            <a href="/tags/Hexo/" class="tag">#Hexo</a>
         </p>
         
     </div>
@@ -214,11 +189,11 @@
 
     <div class="container post-prev-next">
         
-        <a href="/2024/11/17/RT-Thread.html" class="next">
+        <a href="/2024/11/17/3207488204.html" class="next">
             <div>
                 <div class="text">
                     <p class="label">下一篇</p>
-                    <h3 class="title">泰山派&amp;RT-Thread</h3>
+                    <h3 class="title">SBOTFOC</h3>
                 </div>
             </div>
         </a>
