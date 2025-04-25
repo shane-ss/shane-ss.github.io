@@ -176,6 +176,23 @@
 <li>高效：无刷电机的效率通常较高，适合高性能应用。</li>
 <li>精确控制：由于使用电子控制换向，可以实现精确的速度和扭矩控制，适合动态性能要求较高的应用。</li>
 </ul>
+<h1 id="FOC控制系统"><a href="#FOC控制系统" class="headerlink" title="FOC控制系统"></a>FOC控制系统</h1><p><strong>力矩闭环（电流环）</strong>：最底层，直接控制电机的电磁转矩，通过调节定子电流实现。</p>
+<ul>
+<li>最核心的部分，也是整个系统的基础。</li>
+<li>直接控制电流 id,iqi_d, i_qid,iq。</li>
+<li>目标是生成所需的转矩 TTT，以实现速度和位置目标。</li>
+</ul>
+<p><strong>速度闭环</strong>：中间层，调节电机的转速，输出目标电流（转矩）。</p>
+<ul>
+<li>调节电机的实际速度 ωm\omega_mωm 使其跟随目标速度 ωm∗\omega_m^*ωm∗。</li>
+<li>输出目标转矩电流 iq∗i_q^*iq∗，交由力矩闭环控制。</li>
+</ul>
+<p><strong>位置闭环</strong>：顶层，调节电机的位置，输出目标速度。</p>
+<ul>
+<li>调节电机的实际位置 θ\thetaθ 使其跟随目标位置 θ∗\theta^*θ∗。</li>
+<li>输出目标速度 ωm∗\omega_m^*ωm∗，交由速度闭环控制。</li>
+</ul>
+<p>位置控制 → 速度控制 → 力矩控制 → 电流控制 → 电压调制</p>
 
     </div>
 
@@ -284,7 +301,7 @@
             </div>
             
         </div>
-        <span>&copy; 2024 Shane<br>由 <a href="http://hexo.io/" target="_blank">Hexo</a> 驱动 </span>
+        <span>&copy; 2025 Shane<br>由 <a href="http://hexo.io/" target="_blank">Hexo</a> 驱动 </span>
         
         
             <br>

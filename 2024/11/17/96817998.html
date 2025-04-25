@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
   
-  <title>Micro Ros - Shane</title>
+  <title>DWMAC-RK驱动解析 - Shane</title>
   
     <link rel="shortcut icon" href="/favicon.ico">
   
@@ -16,7 +16,7 @@
   
   
   
-  <meta property="og:title" content="Micro Ros - Shane" />
+  <meta property="og:title" content="DWMAC-RK驱动解析 - Shane" />
   
   <meta property="og:type" content="article" />
   
@@ -160,100 +160,76 @@
         </div>
         
 
-        <h1 class="title">Micro Ros</h1>
+        <h1 class="title">DWMAC-RK驱动解析</h1>
     </div>
 
     <div class="divider"></div>
 
     <div class="content">
-        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>大三的时候做了一个四足机器狗，当时想着能不能和ROS结合一下，但由于种种原因，只是草草的在Arduino上跑了跑例程，没能深入去研究学习。最近工作上需要用到Micro Ros，借着这个机会试试能不能更深入的学习一下。</p>
-<p>![fc24435c66be74e9b282ccfaa1c8cf77](.&#x2F;Micro Ros&#x2F;fc24435c66be74e9b282ccfaa1c8cf77.png)</p>
-<p>![image-20241124154809184](.&#x2F;Micro Ros&#x2F;image-20241124154809184.png)</p>
-<p>上图与本文无关，只是突然感概时间匆匆，所以将SBOT照片放在这里。</p>
-<p>因为对于ROS并没有过于深入的去了解过，只能重新开始学习了解。所以在写这篇文章的时候，对于如何组织文章的结构比较茫然，再三思考，反正只是一个学习的记录，暂时没必要把结构梳理得太清楚，索性学到哪儿写到哪儿，学到什么些什么。</p>
-<h1 id="编译libmicroros-a"><a href="#编译libmicroros-a" class="headerlink" title="编译libmicroros.a"></a>编译libmicroros.a</h1><p>因为工作上需要运行Micro Ros的芯片是一个Coretex A核的芯片，需要在RT-Thread上运行这个库。但是谷歌和Github上找了一下运行的方法，大概的步骤可以总结为：编译出对应平台上的<strong>libmicroros.a</strong>这个静态库接着是对接好相应的接口就可以了。</p>
-<p>这里也列出几个我参考的文章：</p>
-<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/548378504">在 RTOS 上移植 MicroROS (ROS2)</a></p>
-<p><a target="_blank" rel="noopener" href="https://club.rt-thread.org/ask/article/6bccb9124f78f873.html">在 RT-Thread上运行 micro ros</a></p>
-<p><a target="_blank" rel="noopener" href="https://micro.ros.org/docs/tutorials/advanced/create_custom_static_library/">Creating custom static micro-ROS library</a></p>
-<p>尝试了RT-Thread官方维护的<a target="_blank" rel="noopener" href="https://github.com/micro-ROS/micro_ros_rtthread_component">micro_ros_rtthread_component</a>跟着文档各种配置环境，但是最终以失败告终。接着我又尝试了用Docker编译官方维护的<a target="_blank" rel="noopener" href="https://github.com/micro-ROS/micro_ros_arduino">micro_ros_arduino</a>工程，经过一通乱搞，不出意外也失败了。最终选择还是选择用<a target="_blank" rel="noopener" href="https://github.com/micro-ROS/micro_ros_setup">micro-ros-setup</a>，至少不用再去配置Docker了。</p>
-<p>那么接下来开始吧，简单记录一下我如何编译出我需要的<strong>libmicroros.a</strong>。</p>
-<p>1、准备一个Ubuntu22.04的虚拟机，为了接下来的工作能够较为顺利的完成，不出现一些奇奇怪怪的环境问题，推荐使用22.04版本的Ubuntu。</p>
-<p>2、安装ROS2。因为micro_ros_setup其实是ROS的一个功能包，编译运行需要依赖ROS2，所以需要装上ROS2。</p>
-<p>安装学习ROS2可以参考鱼香ROS大佬的系列文章<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_27865227/article/details/131363638">ROS2机器人入门到实战</a>，安装教程<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_27865227/article/details/131365548">一键直达</a>。</p>
-<p>安装完成后一定记得执行一下命令：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;source /opt/ros/humble/setup.bash&quot; &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
+        <h1 id="PHY"><a href="#PHY" class="headerlink" title="PHY"></a>PHY</h1><p>PHY芯片通常都符合IEEE标准。IEEE 802.3标准定义了一组标准的MII管理寄存器（如控制寄存器和状态寄存器）。这些标准寄存器通常编号为0到15。</p>
+<h2 id="标准寄存器列表-Registers-0–15"><a href="#标准寄存器列表-Registers-0–15" class="headerlink" title="标准寄存器列表 (Registers 0–15)"></a>标准寄存器列表 (Registers 0–15)</h2><p><strong>寄存器 0: 基本控制寄存器（Basic Control Register, BMCR）</strong></p>
+<ul>
+<li>控制PHY的主要操作，例如复位、速度选择、自动协商启用等。</li>
+</ul>
+<p><strong>寄存器 1: 基本状态寄存器（Basic Status Register, BMSR）</strong></p>
+<ul>
+<li>提供PHY的运行状态信息，包括连接状态、能力信息等。</li>
+</ul>
+<p><strong>寄存器 2: PHY标识1（PHY Identifier 1, PHYIDR1）</strong></p>
+<ul>
+<li>PHY芯片制造商的标识部分，高16位。</li>
+</ul>
+<p><strong>寄存器 3: PHY标识2（PHY Identifier 2, PHYIDR2）</strong></p>
+<ul>
+<li>PHY芯片制造商的标识部分，低16位，包括供应商模型号和版本号。</li>
+</ul>
+<p><strong>寄存器 4: 自动协商广告寄存器（Auto-Negotiation Advertisement, ANAR）</strong></p>
+<ul>
+<li>描述PHY支持的通信能力，如速度和双工模式。</li>
+</ul>
+<p><strong>寄存器 5: 链路伙伴能力寄存器（Link Partner Ability, ANLPAR）</strong></p>
+<ul>
+<li>显示链路对端设备的能力。</li>
+</ul>
+<p><strong>寄存器 6: 自动协商扩展寄存器（Auto-Negotiation Expansion, ANER）</strong></p>
+<ul>
+<li>提供有关自动协商过程的额外信息。</li>
+</ul>
+<p><strong>寄存器 7: 下一个页面传输寄存器（Next Page Transmit, ANNPTR）</strong></p>
+<ul>
+<li>用于支持下一页传输。</li>
+</ul>
+<p><strong>寄存器 8: 链路伙伴下一页寄存器（Link Partner Next Page, ANLPNPR）</strong></p>
+<ul>
+<li>显示链路对端发送的下一页信息。</li>
+</ul>
+<p><strong>寄存器 9: 1000BASE-T能力寄存器（1000BASE-T Control, MSEADR）</strong></p>
+<ul>
+<li>描述PHY对千兆以太网能力的支持。</li>
+</ul>
+<p><strong>寄存器 10: 1000BASE-T状态寄存器（1000BASE-T Status, MSEADR）</strong></p>
+<pre><code>- 显示千兆以太网的状态信息。
+</code></pre>
+<p><strong>寄存器 11–15: 保留（Reserved）</strong></p>
+<pre><code>- 通常为厂商定义的扩展寄存器。
+</code></pre>
+<p>寄存器地址为<code>0x0</code>至<code>0xF</code>，通过MII（Management Data Input&#x2F;Output）总线访问。</p>
+<h1 id="DWMAC简介"><a href="#DWMAC简介" class="headerlink" title="DWMAC简介"></a>DWMAC简介</h1><p>DWMAC（DesignWare MAC，简称DWMAC）是由Synopsys公司设计的一种网络控制器IP核心，属于DesignWare系列的以太网媒体访问控制器（Ethernet Media Access Controller，MAC）。DWMAC主要应用于嵌入式设备、片上系统（SoC）以及支持以太网通信的设备中。</p>
+<h1 id="DWMAC-RK驱动解析"><a href="#DWMAC-RK驱动解析" class="headerlink" title="DWMAC-RK驱动解析"></a>DWMAC-RK驱动解析</h1><p>RK3568的GMAC设备描述在<strong>rk3568.dtsi</strong>文件中可以找到。根据设备树描述可知，RK3568的GMAC控制器使用的是新思科技提供的IP核，型号是<strong>dwmac-4.20a</strong>。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">gmac0: ethernet@fe2a0000 &#123;</span><br><span class="line">    compatible = &quot;rockchip,rk3568-gmac&quot;, &quot;snps,dwmac-4.20a&quot;;</span><br><span class="line">    reg = &lt;0x0 0xfe2a0000 0x0 0x10000&gt;;</span><br><span class="line">    interrupts = &lt;GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH&gt;,</span><br><span class="line">             &lt;GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH&gt;;</span><br><span class="line">    interrupt-names = &quot;macirq&quot;, &quot;eth_wake_irq&quot;;</span><br><span class="line">    rockchip,grf = &lt;&amp;grf&gt;;</span><br><span class="line">    clocks = &lt;&amp;cru SCLK_GMAC0&gt;, &lt;&amp;cru SCLK_GMAC0_RX_TX&gt;,</span><br><span class="line">         &lt;&amp;cru SCLK_GMAC0_RX_TX&gt;, &lt;&amp;cru CLK_MAC0_REFOUT&gt;,</span><br><span class="line">         &lt;&amp;cru ACLK_GMAC0&gt;, &lt;&amp;cru PCLK_GMAC0&gt;,</span><br><span class="line">         &lt;&amp;cru SCLK_GMAC0_RX_TX&gt;, &lt;&amp;cru CLK_GMAC0_PTP_REF&gt;,</span><br><span class="line">         &lt;&amp;cru PCLK_XPCS&gt;;</span><br><span class="line">    clock-names = &quot;stmmaceth&quot;, &quot;mac_clk_rx&quot;,</span><br><span class="line">              &quot;mac_clk_tx&quot;, &quot;clk_mac_refout&quot;,</span><br><span class="line">              &quot;aclk_mac&quot;, &quot;pclk_mac&quot;,</span><br><span class="line">              &quot;clk_mac_speed&quot;, &quot;ptp_ref&quot;,</span><br><span class="line">              &quot;pclk_xpcs&quot;;</span><br><span class="line">    resets = &lt;&amp;cru SRST_A_GMAC0&gt;;</span><br><span class="line">    reset-names = &quot;stmmaceth&quot;;</span><br><span class="line"></span><br><span class="line">    snps,mixed-burst;</span><br><span class="line">    snps,tso;</span><br><span class="line"></span><br><span class="line">    snps,axi-config = &lt;&amp;gmac0_stmmac_axi_setup&gt;;</span><br><span class="line">    snps,mtl-rx-config = &lt;&amp;gmac0_mtl_rx_setup&gt;;</span><br><span class="line">    snps,mtl-tx-config = &lt;&amp;gmac0_mtl_tx_setup&gt;;</span><br><span class="line">    status = &quot;disabled&quot;;</span><br><span class="line"></span><br><span class="line">    mdio0: mdio &#123;</span><br><span class="line">        compatible = &quot;snps,dwmac-mdio&quot;;</span><br><span class="line">        #address-cells = &lt;0x1&gt;;</span><br><span class="line">        #size-cells = &lt;0x0&gt;;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    gmac0_stmmac_axi_setup: stmmac-axi-config &#123;</span><br><span class="line">        snps,wr_osr_lmt = &lt;4&gt;;</span><br><span class="line">        snps,rd_osr_lmt = &lt;8&gt;;</span><br><span class="line">        snps,blen = &lt;0 0 0 0 16 8 4&gt;;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    gmac0_mtl_rx_setup: rx-queues-config &#123;</span><br><span class="line">        snps,rx-queues-to-use = &lt;1&gt;;</span><br><span class="line">        queue0 &#123;&#125;;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    gmac0_mtl_tx_setup: tx-queues-config &#123;</span><br><span class="line">        snps,tx-queues-to-use = &lt;1&gt;;</span><br><span class="line">        queue0 &#123;&#125;;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
-<p>将ROS添加到系统环境中。</p>
-<p>3、安装Git。</p>
-<p>已经安装过可以忽略此步骤，执行命令：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install git</span><br></pre></td></tr></table></figure>
+<p>驱动代码位于**&#x2F;kernel&#x2F;drivers&#x2F;net&#x2F;ethernet&#x2F;stmicro&#x2F;stmmac&#x2F;dwmac-rk.c**。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">platform_driver</span> <span class="title">rk_gmac_dwmac_driver</span> =</span> &#123;</span><br><span class="line">	.probe  = rk_gmac_probe,</span><br><span class="line">	.remove = rk_gmac_remove,</span><br><span class="line">	.driver = &#123;</span><br><span class="line">		.name           = <span class="string">&quot;rk_gmac-dwmac&quot;</span>,</span><br><span class="line">		.pm		= &amp;rk_gmac_pm_ops,</span><br><span class="line">		.of_match_table = rk_gmac_dwmac_match,</span><br><span class="line">	&#125;,</span><br><span class="line">&#125;;</span><br><span class="line">module_platform_driver(rk_gmac_dwmac_driver);</span><br></pre></td></tr></table></figure>
 
-<p>后面需要用git克隆大量的仓库，但是再虚拟机中访问Github的仓库时候大概率会遇到网络问题。</p>
-<p>解决方法有两个。</p>
-<p><strong>解决方法一</strong></p>
-<p>第一种是使用”科技“。</p>
-<p>启动你的”科技“，在”科技“软件中启用局域网代理。</p>
-<p>进入windows的设置中，查看你的代理端口号，记住他，后面可能会经常用到。</p>
-<p>![image-20241124163023786](.&#x2F;Micro Ros&#x2F;image-20241124163023786.png)</p>
-<p>将虚拟机网卡设置为桥接模式。</p>
-<p>![image-20241124163142206](.&#x2F;Micro Ros&#x2F;image-20241124163142206.png)</p>
-<p>配置git代理，输入命令：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global http.proxy http://电脑ip:代理端口</span><br><span class="line">git config --global https.proxy http://电脑ip:代理端口</span><br></pre></td></tr></table></figure>
+<p><code>rk_gmac_probe</code>函数负责在设备和驱动匹配后初始化 Rockchip 的 GMAC 控制器驱动。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">rk_gmac_probe</span><span class="params">(<span class="keyword">struct</span> platform_device *pdev)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">plat_stmmacenet_data</span> *<span class="title">plat_dat</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">stmmac_resources</span> <span class="title">stmmac_res</span>;</span></span><br><span class="line">	<span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">rk_gmac_ops</span> *<span class="title">data</span>;</span></span><br><span class="line">	<span class="type">int</span> ret;</span><br><span class="line"></span><br><span class="line">	data = of_device_get_match_data(&amp;pdev-&gt;dev);</span><br><span class="line">	<span class="keyword">if</span> (!data) &#123;</span><br><span class="line">		dev_err(&amp;pdev-&gt;dev, <span class="string">&quot;no of match data provided\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> -EINVAL;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	ret = stmmac_get_platform_resources(pdev, &amp;stmmac_res);</span><br><span class="line">	<span class="keyword">if</span> (ret)</span><br><span class="line">		<span class="keyword">return</span> ret;</span><br><span class="line"></span><br><span class="line">	plat_dat = stmmac_probe_config_dt(pdev, &amp;stmmac_res.mac);</span><br><span class="line">	<span class="keyword">if</span> (IS_ERR(plat_dat))</span><br><span class="line">		<span class="keyword">return</span> PTR_ERR(plat_dat);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!of_device_is_compatible(pdev-&gt;dev.of_node, <span class="string">&quot;snps,dwmac-4.20a&quot;</span>))</span><br><span class="line">		plat_dat-&gt;has_gmac = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">	plat_dat-&gt;fix_mac_speed = rk_fix_speed;</span><br><span class="line">	plat_dat-&gt;get_eth_addr = rk_get_eth_addr;</span><br><span class="line"></span><br><span class="line">	plat_dat-&gt;bsp_priv = rk_gmac_setup(pdev, plat_dat, data);</span><br><span class="line">	<span class="keyword">if</span> (IS_ERR(plat_dat-&gt;bsp_priv)) &#123;</span><br><span class="line">		ret = PTR_ERR(plat_dat-&gt;bsp_priv);</span><br><span class="line">		<span class="keyword">goto</span> err_remove_config_dt;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	ret = rk_gmac_clk_init(plat_dat);</span><br><span class="line">	<span class="keyword">if</span> (ret)</span><br><span class="line">		<span class="keyword">goto</span> err_remove_config_dt;</span><br><span class="line"></span><br><span class="line">	ret = rk_gmac_powerup(plat_dat-&gt;bsp_priv);</span><br><span class="line">	<span class="keyword">if</span> (ret)</span><br><span class="line">		<span class="keyword">goto</span> err_remove_config_dt;</span><br><span class="line"></span><br><span class="line">	ret = stmmac_dvr_probe(&amp;pdev-&gt;dev, plat_dat, &amp;stmmac_res);</span><br><span class="line">	<span class="keyword">if</span> (ret)</span><br><span class="line">		<span class="keyword">goto</span> err_gmac_powerdown;</span><br><span class="line"></span><br><span class="line">	ret = dwmac_rk_create_loopback_sysfs(&amp;pdev-&gt;dev);</span><br><span class="line">	<span class="keyword">if</span> (ret)</span><br><span class="line">		<span class="keyword">goto</span> err_gmac_powerdown;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">err_gmac_powerdown:</span><br><span class="line">	rk_gmac_powerdown(plat_dat-&gt;bsp_priv);</span><br><span class="line">err_remove_config_dt:</span><br><span class="line">	stmmac_remove_config_dt(pdev, plat_dat);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>![image-20241124163453089](.&#x2F;Micro Ros&#x2F;image-20241124163453089.png)</p>
-<p>使用<code>git config --list</code>查看刚才的配置。</p>
-<p><strong>解决方法二</strong></p>
-<p>为什么要有两个解决方法呢，因为后面在编译静态库的时候，有可能即使你设置了代理Git依然会失败。</p>
-<p>首先取消掉刚才设置的代理，输入命令：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global --unset http.proxy</span><br><span class="line">git config --global --unset https.proxy</span><br></pre></td></tr></table></figure>
+<p>首先使用&#96;&#96;&#96;of_device_get_match_data&#96;&#96;函数用来匹配设备树中启用的GMAC驱动版本，如图：</p>
+<p><img src="/2024/11/17/96817998/image-20250110164114172.png" alt="image-20250110164114172"></p>
+<p><code>stmmac_get_platform_resources</code>函数用于从设备树中获取GMAC的中断号、唤醒终端号以及低功耗空闲模式中断号。并使用<code>platform_get_resource```接口获取GMAC控制器的物理内存地址，使用</code>devm_ioremap_resource&#96;&#96;接口映射这段内存地址，以方便接下来的操作。</p>
+<p><img src="/2024/11/17/96817998/image-20250110170234258.png" alt="image-20250110170234258"></p>
+<p><code>stmmac_probe_config_dt</code>函数有一点复杂。</p>
 
-<p>去网上找一下国内的Github镜像网站，例如<a target="_blank" rel="noopener" href="https://gitclone.com/">gitclone</a>。</p>
-<p>然后按照网站上的提示设置</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global url.&quot;https://gitclone.com/&quot;.insteadOf https://</span><br></pre></td></tr></table></figure>
-
-<p>基本原理都是配置git在克隆某个仓库的时候去替换掉仓库的链接的一部分，这样就可以走代理网站加速克隆了。每个代理网站的替换方式有区别，并且这些网站可能随时挂掉，所以需要自行寻找然后配置insteadof。</p>
-<p>4、克隆micro_ros_setup。</p>
-<p>根据Github上的<a target="_blank" rel="noopener" href="https://github.com/micro-ROS/micro_ros_setup">教程</a>安装即可。</p>
-<p>找一个干净的目录，依次执行一下命令：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">source /opt/ros/$ROS_DISTRO/setup.bash # 如果前面执行过 echo &quot;source /opt/ros/humble/setup.bash&quot; &gt;&gt; ~/.bashrc 这条命令可以忽略</span><br><span class="line"></span><br><span class="line">mkdir uros_ws &amp;&amp; cd uros_ws</span><br><span class="line"></span><br><span class="line">git clone -b $ROS_DISTRO https://github.com/micro-ROS/micro_ros_setup.git src/micro_ros_setup</span><br><span class="line"></span><br><span class="line">rosdep update &amp;&amp; rosdep install --from-paths src --ignore-src -y</span><br><span class="line"></span><br><span class="line">colcon build</span><br><span class="line"></span><br><span class="line">source install/local_setup.bash</span><br></pre></td></tr></table></figure>
-
-<p>更新ros依赖的时候大概率会遇到网络方面的问题，鱼香ROS大佬也帮我们解决了，按照这个<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/398754989">教程</a>配置。</p>
-<p>配置完成后后续在有使用到<code>rosdep</code>命令时全部替换成<code>rosdepc</code>即可。</p>
-<p>![image-20241124170004309](.&#x2F;Micro Ros&#x2F;image-20241124170004309.png)</p>
-<p>5、编译<strong>libmicroros.a</strong></p>
-<p>接下来就可以依据这个教程编译静态库了<a target="_blank" rel="noopener" href="https://micro.ros.org/docs/tutorials/advanced/create_custom_static_library/">Creating custom static micro-ROS library</a>。</p>
-<p>大概的步骤和官方说的差不多，主要涉及到工具链的设置以及colcon.meta配置。</p>
-<p>我以RK3566举例，RK3566是cortexa55核的芯片。</p>
-<p>首先使用命令创建一个通用的lib，注意如果网络有问题这一步很容易失败。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ros2 run micro_ros_setup create_firmware_ws.sh generate_lib</span><br></pre></td></tr></table></figure>
-
-<p>![image-20241124171949763](.&#x2F;Micro Ros&#x2F;image-20241124171949763.png)</p>
-<p>创建Cmake和配置文件。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">touch cortexa55_toolchain.cmake</span><br><span class="line">touch cortexa55_colcon.meta</span><br></pre></td></tr></table></figure>
-
-<p>根据实际情况编写Cmake和配置文件</p>
-<p>cortexa55_toolchain.cmake内容：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">设置目标系统为通用嵌入式</span></span><br><span class="line">set(CMAKE_SYSTEM_NAME Generic)</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">启用交叉编译模式</span></span><br><span class="line">set(CMAKE_CROSSCOMPILING 1)</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">设置编译目标类型</span></span><br><span class="line">set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">设置AArch64工具链路径及编译器</span></span><br><span class="line">set(CMAKE_C_COMPILER &quot;/home/ss/WorkSpace/uros_ws/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/aarch64-elf-gcc&quot;)</span><br><span class="line">set(CMAKE_CXX_COMPILER &quot;/home/ss/WorkSpace/uros_ws/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/aarch64-elf-g++&quot;)</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">确保编译器可用</span></span><br><span class="line">set(CMAKE_C_COMPILER_WORKS 1 CACHE INTERNAL &quot;&quot;)</span><br><span class="line">set(CMAKE_CXX_COMPILER_WORKS 1 CACHE INTERNAL &quot;&quot;)</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">AArch64优化编译标志</span></span><br><span class="line">set(FLAGS &quot;-O2 -ffunction-sections -fdata-sections -fno-exceptions -mcpu=cortex-a53 -nostdlib --param max-inline-insns-single=500 -D&#x27;RCUTILS_LOG_MIN_SEVERITY=RCUTILS_LOG_MIN_SEVERITY_NONE&#x27;&quot; CACHE STRING &quot;&quot; FORCE)</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">C语言编译标志</span></span><br><span class="line">set(CMAKE_C_FLAGS_INIT &quot;-std=c11 $&#123;FLAGS&#125; -DCLOCK_MONOTONIC=0 -D&#x27;__attribute__(x)=&#x27;&quot; CACHE STRING &quot;&quot; FORCE)</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">C++语言编译标志</span></span><br><span class="line">set(CMAKE_CXX_FLAGS_INIT &quot;-std=c++11 $&#123;FLAGS&#125; -fno-rtti -DCLOCK_MONOTONIC=0 -D&#x27;__attribute__(x)=&#x27;&quot; CACHE STRING &quot;&quot; FORCE)</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">设置字节序为小端</span></span><br><span class="line">set(__BIG_ENDIAN__ 0)</span><br></pre></td></tr></table></figure>
-
-<p>cortexa55_colcon.meta内容：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;names&quot;: &#123;</span><br><span class="line">        &quot;tracetools&quot;: &#123;</span><br><span class="line">            &quot;cmake-args&quot;: [</span><br><span class="line">                &quot;-DTRACETOOLS_DISABLED=ON&quot;,  // 禁用 tracetools 库，该库用于跟踪 ROS 2 运行时的行为</span><br><span class="line">                &quot;-DTRACETOOLS_STATUS_CHECKING_TOOL=OFF&quot;  // 禁用状态检查工具，用于减少不必要的调试信息</span><br><span class="line">            ]</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;rosidl_typesupport&quot;: &#123;</span><br><span class="line">            &quot;cmake-args&quot;: [</span><br><span class="line">                &quot;-DROSIDL_TYPESUPPORT_SINGLE_TYPESUPPORT=ON&quot;  // 启用单一类型支持，可能是为了减少代码生成的复杂度或内存开销</span><br><span class="line">            ]</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;rcl&quot;: &#123;</span><br><span class="line">            &quot;cmake-args&quot;: [</span><br><span class="line">                &quot;-DBUILD_TESTING=OFF&quot;,  // 禁用测试构建，减少构建时间</span><br><span class="line">                &quot;-DRCL_COMMAND_LINE_ENABLED=OFF&quot;,  // 禁用 RCL 的命令行工具功能</span><br><span class="line">                &quot;-DRCL_LOGGING_ENABLED=OFF&quot;  // 禁用 RCL 的日志功能</span><br><span class="line">            ]</span><br><span class="line">        &#125;, </span><br><span class="line">        &quot;rcutils&quot;: &#123;</span><br><span class="line">            &quot;cmake-args&quot;: [</span><br><span class="line">                &quot;-DENABLE_TESTING=OFF&quot;,  // 禁用 rcutils 测试功能</span><br><span class="line">                &quot;-DRCUTILS_NO_FILESYSTEM=ON&quot;,  // 禁用文件系统支持，减少内存使用</span><br><span class="line">                &quot;-DRCUTILS_NO_THREAD_SUPPORT=ON&quot;,  // 禁用线程支持，适用于没有线程的环境</span><br><span class="line">                &quot;-DRCUTILS_NO_64_ATOMIC=ON&quot;,  // 禁用 64 位原子操作支持，可能是为了兼容 32 位系统</span><br><span class="line">                &quot;-DRCUTILS_AVOID_DYNAMIC_ALLOCATION=ON&quot;  // 避免使用动态内存分配，减少堆内存的使用</span><br><span class="line">            ]</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;microxrcedds_client&quot;: &#123;</span><br><span class="line">            &quot;cmake-args&quot;: [</span><br><span class="line">                &quot;-DUCLIENT_PIC=OFF&quot;,  // 禁用编译时的 PIC (Position Independent Code)，可能是为了某些平台的优化</span><br><span class="line">                &quot;-DUCLIENT_PROFILE_UDP=OFF&quot;,  // 禁用 UDP 协议支持</span><br><span class="line">                &quot;-DUCLIENT_PROFILE_TCP=OFF&quot;,  // 禁用 TCP 协议支持</span><br><span class="line">                &quot;-DUCLIENT_PROFILE_DISCOVERY=OFF&quot;,  // 禁用自动发现功能</span><br><span class="line">                &quot;-DUCLIENT_PROFILE_SERIAL=OFF&quot;,  // 禁用串行通信支持</span><br><span class="line">                &quot;-UCLIENT_PROFILE_STREAM_FRAMING=ON&quot;,  // 启用流分帧支持</span><br><span class="line">                &quot;-DUCLIENT_PROFILE_CUSTOM_TRANSPORT=ON&quot;  // 启用自定义传输配置</span><br><span class="line">            ]</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;rmw_microxrcedds&quot;: &#123;</span><br><span class="line">            &quot;cmake-args&quot;: [</span><br><span class="line">                &quot;-DRMW_UXRCE_MAX_NODES=1&quot;,  // 设置最大节点数为 1，适用于节点数量较少的场景</span><br><span class="line">                &quot;-DRMW_UXRCE_MAX_PUBLISHERS=5&quot;,  // 设置最大发布者数为 5</span><br><span class="line">                &quot;-DRMW_UXRCE_MAX_SUBSCRIPTIONS=5&quot;,  // 设置最大订阅者数为 5</span><br><span class="line">                &quot;-DRMW_UXRCE_MAX_SERVICES=1&quot;,  // 设置最大服务数为 1</span><br><span class="line">                &quot;-DRMW_UXRCE_MAX_CLIENTS=1&quot;,  // 设置最大客户端数为 1</span><br><span class="line">                &quot;-DRMW_UXRCE_MAX_HISTORY=4&quot;,  // 设置最大消息历史数量为 4</span><br><span class="line">                &quot;-DRMW_UXRCE_TRANSPORT=custom&quot;  // 设置传输类型为自定义，适用于特殊的传输配置</span><br><span class="line">            ]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>下载<a target="_blank" rel="noopener" href="https://developer.arm.com/downloads/-/gnu-a/8-3-2019-03">工具链</a>放到对应的目录下。</p>
-<p>![image-20241124172812291](.&#x2F;Micro Ros&#x2F;image-20241124172812291.png)</p>
-<p>![image-20241124172730046](.&#x2F;Micro Ros&#x2F;image-20241124172730046.png)</p>
-<p>![image-20241124173040941](.&#x2F;Micro Ros&#x2F;image-20241124173040941.png)</p>
-<p>注意刚才cmake脚本中设置的工具链路径。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">设置AArch64工具链路径及编译器</span></span><br><span class="line">set(CMAKE_C_COMPILER &quot;/home/ss/WorkSpace/uros_ws/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/aarch64-elf-gcc&quot;)</span><br><span class="line">set(CMAKE_CXX_COMPILER &quot;/home/ss/WorkSpace/uros_ws/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/aarch64-elf-g++&quot;)</span><br></pre></td></tr></table></figure>
-
-<p>输入命令编译。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source install/local_setup.bash &amp;&amp; ros2 run micro_ros_setup build_firmware.sh $(pwd)/cortexa55_toolchain.cmake $(pwd)/cortexa55_colcon.meta</span><br></pre></td></tr></table></figure>
-
-<p>编译成功后，静态库保存在**.&#x2F;firmware&#x2F;build&#x2F;**目录下。</p>
-<p>![image-20241124173621475](.&#x2F;Micro Ros&#x2F;image-20241124173621475.png)</p>
-<p>6、总结</p>
-<p>编译配置其实蛮简单的，最大的问题是网络，网络不好很容易遇到奇奇怪怪的问题导致编译失败。</p>
-<h1 id="移植Micro-Ros"><a href="#移植Micro-Ros" class="headerlink" title="移植Micro Ros"></a>移植Micro Ros</h1>
     </div>
 
     
@@ -266,7 +242,7 @@
         <p class="tags">
             
             <i class="icon"></i>
-            <a href="/tags/Micro-Ros/" class="tag">#Micro Ros</a>
+            <a href="/tags/DWMAC/" class="tag">#DWMAC</a><a href="/tags/RK3568/" class="tag">#RK3568</a>
         </p>
         
     </div>
@@ -274,11 +250,11 @@
 
     <div class="container post-prev-next">
         
-        <a href="/2024/11/17/3207488204.html" class="next">
+        <a href="/2024/11/17/96817998.html" class="next">
             <div>
                 <div class="text">
                     <p class="label">下一篇</p>
-                    <h3 class="title">SBOTFOC</h3>
+                    <h3 class="title">Micro Ros</h3>
                 </div>
             </div>
         </a>
@@ -352,7 +328,7 @@
             </div>
             
         </div>
-        <span>&copy; 2024 Shane<br>由 <a href="http://hexo.io/" target="_blank">Hexo</a> 驱动 </span>
+        <span>&copy; 2025 Shane<br>由 <a href="http://hexo.io/" target="_blank">Hexo</a> 驱动 </span>
         
         
             <br>
