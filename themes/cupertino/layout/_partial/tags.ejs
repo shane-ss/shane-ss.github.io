@@ -1,16 +1,12 @@
 <div class="container">
     <div class="meta">
         <h2 class="title"><%= __('tags') %></h2>
+        <p class="count"><%= __('posts_count', site.posts.length) %></p>
     </div>
     <div class="divider"></div>
     <div class="tags">
-        <%
-            var tags = ''
-            site.tags.forEach((tag) => {
-                tags += `<a href="${config.root}${tag.path}" class="tag">${theme.hashtag_prefix_before_tags ? '#' : ''}${tag.name}</a>${theme.hashtag_prefix_before_tags ? '' : ','}`
-            })
-            if (!theme.hashtag_prefix_before_tags) { tags = tags.slice(0, tags.length - 1) }
-        %>
-        <%- tags %>
+        <% site.tags.sort('name').forEach((tag) => { %>
+        <a href="<%= url_for(tag.path) %>" class="tag reveal"><%= theme.hashtag_prefix_before_tags ? '#' : '' %><%= tag.name %><span class="count"><%= tag.length %></span></a>
+        <% }) %>
     </div>
 </div>

@@ -5,6 +5,7 @@
 <% } else if (page.type == 'categories') { %>
     <%- partial('_partial/categories') %>
 <% } else { %>
+<div class="reading-progress" aria-hidden="true"></div>
 <article class="post">
     <div class="meta">
         <% if (page.categories && page.categories.length) { %>
@@ -15,13 +16,12 @@
         </div>
         <% } %>
 
-        <% if (!page.no_date) { %>
         <div class="date" id="date">
-            <span><%= ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][page.date.month()] %></span>
-            <span><%- page.date.date() %>,</span>
-            <span><%- page.date.year() %></span>
+            <% if (!page.no_date) { %>
+            <time datetime="<%= page.date.toISOString() %>"><%= date(page.date, 'YYYY年M月D日') %></time>
+            <% } %>
+            <span><%= __('reading_minutes', reading_minutes(page)) %></span>
         </div>
-        <% } %>
 
         <h1 class="title"><%= page.title %></h1>
     </div>
@@ -47,7 +47,6 @@
                 })
                 if (!theme.hashtag_prefix_before_tags) { tags = tags.slice(0, tags.length - 1) }
             %>
-            <i class="icon"></i>
             <%- tags %>
         </p>
         <% } %>
@@ -70,7 +69,7 @@
             <div>
                 <div class="text">
                     <p class="label"><%= __('prev_post') %></p>
-                    <h3 class="title"><%= page.next.title %></>
+                    <h3 class="title"><%= page.next.title %></h3>
                 </div>
             </div>
         </a>

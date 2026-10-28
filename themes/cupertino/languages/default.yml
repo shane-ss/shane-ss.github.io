@@ -17,3 +17,10 @@ categories: Categories
 tags: Tags
 next_post: Next
 prev_post: Previous
+all_posts: All posts
+reading_minutes: '%s min read'
+read_post: Read
+posts_count: '%s posts'
+scheme_light: Light
+scheme_dark: Dark
+scheme_auto: Auto

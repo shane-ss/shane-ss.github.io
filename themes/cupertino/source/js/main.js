@@ -117,8 +117,9 @@
         }
     }
 
-    if (document.body.attributes['data-toc']) {
-        const content = document.getElementsByClassName('content')[0]
+    const postContent = document.querySelector('.post .content')
+    if (document.body.attributes['data-toc'] && postContent) {
+        const content = postContent
         const maxDepth = document.body.attributes['data-toc-max-depth'].value
 
         var headingSelector = ''
@@ -154,5 +155,49 @@
             divider.classList.add('divider')
             toc.after(divider)
         }
+    }
+
+    // Fade-up reveal for cards and images as they scroll into view
+    if (document.documentElement.classList.contains('js-reveal')) {
+        document.querySelectorAll('.post .content p img, .post .content .highlight').forEach((el) => {
+            if (el.getBoundingClientRect().top > window.innerHeight) el.classList.add('reveal')
+        })
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) return
+                const el = entry.target
+                observer.unobserve(el)
+                el.classList.add('revealed')
+                // hand transforms back to the element's own hover styles once done
+                setTimeout(() => el.classList.remove('reveal', 'revealed'), 1200)
+            })
+        }, { rootMargin: '0px 0px -8% 0px' })
+        document.querySelectorAll('.reveal').forEach((el, i) => {
+            if (el.getBoundingClientRect().top < window.innerHeight) {
+                el.style.setProperty('--reveal-delay', Math.min(i, 6) * 0.06 + 's')
+            }
+            observer.observe(el)
+        })
+    }
+
+    // Reading progress bar on post pages
+    const progress = document.querySelector('.reading-progress')
+    if (progress) {
+        const article = document.querySelector('.post .content')
+        let ticking = false
+        const update = () => {
+            const rect = article.getBoundingClientRect()
+            const total = rect.height - window.innerHeight
+            const ratio = total > 0 ? Math.min(1, Math.max(0, -rect.top / total)) : 1
+            progress.style.transform = 'scaleX(' + ratio + ')'
+            ticking = false
+        }
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                ticking = true
+                requestAnimationFrame(update)
+            }
+        }, { passive: true })
+        update()
     }
 })()

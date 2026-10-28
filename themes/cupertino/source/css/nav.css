@@ -29,8 +29,9 @@ nav a, nav a:hover, nav a:focus, nav a:active, nav a:link, nav a:visited {
 
 nav .title {
     margin: 0;
-    font-size: 20px;
-    font-weight: 500;
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -.01em;
     line-height: 48px;
     color: var(--black-2)!important;
 }
@@ -48,15 +49,22 @@ nav .nav-item {
     display: inline-block;
     text-align: center;
     flex: 1;
-    font-size: 16px;
+    font-size: 14px;
     height: 48px;
     line-height: 48px;
-    padding: 0 16px;
-    transition: padding 0.2s, color 0.5s;
+    padding: 0 14px;
+    opacity: .8;
+    transition: padding 0.2s, color 0.3s, opacity 0.3s;
 }
 
 nav .nav-item:hover, nav .nav-item:focus {
     color: var(--black-2);
+    opacity: 1;
+}
+
+nav .nav-item.active {
+    color: var(--black-2);
+    opacity: 1;
 }
 
 @media screen and (max-width: 600px) {
@@ -78,8 +86,9 @@ nav .nav-item-home {
 nav .nav-item-icon {
     width: 32px;
     height: 48px;
+    margin-left: 6px;
     background-position: center;
-    background-size: 24px 24px;
+    background-size: 18px 18px;
     background-repeat: no-repeat;
     padding: 0;
 }
@@ -233,5 +242,10 @@ body[data-color-scheme="dark"] nav .nav-item-search {
     nav.open .nav-items {
         transform: translate(0, -0%);
         opacity: 1;
+    }
+}
+@media screen and (max-width: 600px) {
+    nav.open {
+        background-color: var(--body-bg);
     }
 }

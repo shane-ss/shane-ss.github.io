@@ -1,19 +1,37 @@
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 128px;
+}
+
 .tags .tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 8px 16px;
-  margin: 4px;
-  font-size: 14px;
+  font-size: 15px;
   border-radius: 980px;
-  background-color: var(--white);
+  background-color: var(--card-bg);
   color: var(--black-2);
   text-decoration: none;
   border: 1px solid var(--border-color);
+  transition: background-color .2s, color .2s, transform .3s cubic-bezier(.16, 1, .3, 1);
+}
+
+.tags .tag:link, .tags .tag:visited {
+  color: var(--black-2);
 }
 
 .tags .tag:hover {
-  background-color: var(--white-1);
-  color: var(--black);
+  text-decoration: none;
+  background-color: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+  transform: translateY(-2px);
 }
 
-.tags {
-  margin-bottom: 128px;
+.tags .tag .count {
+  font-size: 12px;
+  opacity: .6;
 }

@@ -1,9 +1,19 @@
 body {
-  background-color: var(--body-bg);
+  background-color: var(--post-bg);
+}
+
+footer {
+  background-color: var(--post-bg);
 }
 
 .post {
-  margin: 128px 0;
+  margin: 72px 0 64px;
+}
+
+@media screen and (max-width: 600px) {
+  .post {
+    margin-top: 40px;
+  }
 }
 
 .meta .categories {
@@ -20,19 +30,39 @@ body {
 
 .meta .date {
   color: var(--grey);
+  font-size: 15px;
   font-weight: 600;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+}
+
+.meta .date > * + *::before {
+  content: "·";
+  margin-right: 8px;
+}
+
+.meta .date .tag-link:link,
+.meta .date .tag-link:visited {
+  color: var(--link);
 }
 
 .meta .title {
-  font-size: 48px;
-  margin-top: 16px;
+  font-size: clamp(36px, 6vw, 56px);
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -.015em;
+  margin-top: 14px;
+  margin-bottom: 0;
+  color: var(--black);
 }
 
 .content {
-  font-size: 19px;
-  line-height: 1.4211;
+  font-size: 18px;
+  line-height: 1.75;
   font-weight: 400;
-  letter-spacing: 0.012em;
+  letter-spacing: 0.01em;
+  color: var(--black-2);
 }
 
 .content p,
@@ -68,7 +98,13 @@ hr,
 
 .content p img,
 .content .block-large img {
-  border-radius: 10px;
+  border-radius: 14px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, .06);
+}
+
+.content a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .content table,
@@ -79,52 +115,38 @@ hr,
 .content table {
   padding: 0;
   border-collapse: collapse;
-  border-radius: 15px;
-  max-width: 800px;
+  border-radius: 14px;
+  max-width: calc(800px - 16px * 2);
   overflow-x: auto;
+  font-size: 15px;
+  border: 1px solid var(--border-color);
 }
 
 .content table tr {
-  background-color: var(--card-bg);
+  background-color: transparent;
 }
 
 .content table tr:nth-child(even) {
-  background-color: transparent;
+  background-color: var(--code-bg);
 }
 
 .content table th,
 .content table td {
   margin: 0;
-  padding: 6px 12px;
+  padding: 10px 16px;
 }
 
 .content table th {
+  text-align: left;
+  font-weight: 600;
   border-bottom: 1px solid var(--border-color);
 }
 
-.content table thead tr th:first-child {
-  border-top-left-radius: 15px;
-}
-
-.content table thead tr th:last-child {
-  border-top-right-radius: 15px;
-}
-
-.content table tbody tr:last-child td:first-child {
-  border-bottom-left-radius: 15px;
-}
-
-.content table tbody tr:last-child td:last-child {
-  border-bottom-right-radius: 15px;
-}
-
 @media screen and (max-width: 800px) {
-  .content table,
-  .content table thead tr th:first-child,
-  .content table thead tr th:last-child,
-  .content table tbody tr:last-child td:first-child,
-  .content table tbody tr:last-child td:last-child {
+  .content table {
     border-radius: 0;
+    border-left: none;
+    border-right: none;
   }
 }
 
@@ -137,9 +159,18 @@ hr,
 .content > pre {
   overflow-x: auto;
   overflow-y: hidden;
-  background-color: var(--card-bg);
-  border-radius: 15px;
+  background-color: var(--code-bg);
+  border-radius: 14px;
   max-width: calc(800px - 16px * 2);
+  margin-top: 1.4em;
+  margin-bottom: 1.4em;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.content .highlight {
+  padding: 16px 20px;
+  box-sizing: border-box;
 }
 
 @media screen and (max-width: 800px) {
@@ -153,8 +184,29 @@ hr,
   border: none;
 }
 
+.content .highlight table {
+  font-size: inherit;
+  border-radius: 0;
+  overflow: visible;
+  margin: 0;
+}
+
+.content .highlight table tr:nth-child(even) {
+  background-color: transparent;
+}
+
+.content .highlight table td {
+  padding: 0;
+  vertical-align: top;
+}
+
+.content .highlight pre {
+  margin: 0;
+}
+
 .content .highlight .gutter {
-  padding-right: 16px;
+  padding-right: 20px;
+  text-align: right;
 }
 
 .content > pre {
@@ -162,22 +214,37 @@ hr,
   padding: 20px 24px;
 }
 
-.content > pre > code {
+.content > pre > code,
+.content .highlight code {
   background-color: transparent;
+  padding: 0;
+  font-size: inherit;
 }
 
 .content ul,
 .content ol {
   padding: 0 16px;
-  padding-left: 32px;
+  padding-left: 40px;
   margin-block-start: 1em;
   margin-block-end: 1em;
   max-width: calc(800px - 16px * 2);
 }
 
+.content li {
+  margin: .3em 0;
+}
+
 .content blockquote {
   max-width: calc(800px - 16px * 2);
-  padding: 0 8px;
+  padding: 2px 20px;
+  color: var(--black-4);
+  background-color: var(--code-bg);
+  border-radius: 0 12px 12px 0;
+  box-sizing: border-box;
+}
+
+.content blockquote p {
+  padding: 0;
 }
 
 /* for [hexo-math](https://github.com/hexojs/hexo-math): */
@@ -187,67 +254,73 @@ hr,
   text-align: center;
 }
 
-.tags {
+.about .tags {
   display: flex;
   flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
 }
 
-.tags .icon {
-  --size: 14px;
-  background-position: center;
-  background-size: var(--size) var(--size);
-  background-repeat: no-repeat;
-  display: block;
-  width: var(--size);
-  height: var(--size);
-  margin-right: 6px;
+.about .tags .tag {
+  font-size: 13px;
+  padding: 4px 12px;
+  border-radius: 980px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  transition: background-color .2s, color .2s;
 }
 
-body[data-color-scheme="auto"] .tags .icon {
-  background-image: url(/theme-img/tags-dark.svg);
-}
-
-@media (prefers-color-scheme: dark) {
-  body[data-color-scheme="auto"] .tags .icon {
-    background-image: url(/theme-img/tags-light.svg);
-  }
-}
-
-body[data-color-scheme="dark"] .tags .icon {
-  background-image: url(/theme-img/tags-light.svg);
-}
-
-.tags .tag {
-  font-size: 14px;
-  display: block;
-  height: 14px;
-  margin-right: 4px;
+.about .tags .tag:hover {
+  text-decoration: none;
+  background-color: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
 }
 
 .about {
-  border-radius: 7px;
-  background-color: var(--card-bg);
+  border-radius: 18px;
+  background-color: var(--code-bg);
   max-width: calc(800px - 16px * 2);
-  padding: 16px;
-  margin: 64px auto;
+  padding: 24px 28px;
+  margin: 80px auto 48px;
+  box-sizing: border-box;
 }
 
 @media screen and (max-width: 800px) {
   .about {
-    border-radius: 0;
+    margin-left: 16px;
+    margin-right: 16px;
   }
 }
 
 .about h1 {
   margin: 0;
+  font-size: 17px;
+  font-weight: 600;
 }
 
 .about .details {
-  margin: 16px 0;
+  margin: 8px 0 16px;
+  font-size: 14px;
+  color: var(--black-4);
 }
 
 .about .details p {
   margin: 6px 0;
+}
+
+.content h1,
+.content h2,
+.content h3,
+.content h4,
+.content h5,
+.content h6 {
+  line-height: 1.3;
+  font-weight: 700;
+  letter-spacing: -.005em;
+  color: var(--black);
+  margin-top: 2em;
+  margin-bottom: .6em;
 }
 
 .content h1 > .headerlink,
@@ -285,42 +358,67 @@ body[data-color-scheme="dark"] .tags .icon {
 }
 
 .content > h1 {
-  font-size: 36px;
+  font-size: 32px;
 }
 
 .content > h2 {
-  font-size: 30px;
-}
-
-.content > h3 {
   font-size: 26px;
 }
 
+.content > h3 {
+  font-size: 22px;
+}
+
 .content > h4 {
-  font-size: 20px;
+  font-size: 19px;
 }
 
 .content > h5 {
-  font-size: 16px;
+  font-size: 17px;
 }
 
 .content > h6 {
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .post-prev-next {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  max-width: calc(800px - 16px * 2) !important;
+  box-sizing: border-box;
+  padding: 0 !important;
+}
+
+@media screen and (max-width: 800px) {
+  .post-prev-next {
+    margin: 0 16px !important;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .post-prev-next {
+    grid-template-columns: 1fr;
+  }
 }
 
 .post-prev-next > a {
-  width: 50%;
-  color: var(--black-4);
+  color: var(--black-2);
   text-decoration: none;
+  border-radius: 18px;
+  padding: 20px 24px;
+  border: 1px solid var(--border-color);
+  transition: transform .4s cubic-bezier(.16, 1, .3, 1), border-color .2s, background-color .2s;
 }
 
-.post-prev-next > a:hover {
-  color: var(--black-2);
+.post-prev-next > a:not([href]) {
+  border-color: transparent;
+}
+
+.post-prev-next > a[href]:hover {
+  text-decoration: none;
+  transform: translateY(-3px);
+  border-color: var(--link);
 }
 
 .post-prev-next > a > div {
@@ -346,6 +444,13 @@ body[data-color-scheme="dark"] .tags .icon {
 }
 
 .post-prev-next .text .label {
-  margin-bottom: 4px;
+  font-size: 13px;
+  margin-bottom: 6px;
   color: var(--grey);
+}
+
+.post-prev-next .text .title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--black);
 }

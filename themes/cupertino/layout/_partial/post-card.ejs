@@ -1,0 +1,32 @@
+<article class="post-list-item reveal">
+    <a href="<%- url_for(post.path) %>">
+        <% if (post.cover_image) { %>
+        <div class="cover-img">
+            <img src="<%= post.cover_image %>" alt="<%= post.cover_image_alt %>" loading="lazy">
+        </div>
+        <% } %>
+        <div class="content">
+            <% if ((post.categories && post.categories.length) || (post.tags && post.tags.length)) { %>
+            <div class="eyebrow<%= theme.uppercase_categories ? ' text-uppercase' : '' %>">
+            <% post.categories.forEach((category) => { %>
+                <span><%= category.name %></span>
+            <% }) %>
+            <% post.tags.forEach((tag) => { %>
+                <span><%= tag.name %></span>
+            <% }) %>
+            </div>
+            <% } %>
+            <div class="title"><%= post.title %></div>
+            <% var summary = theme.show_excerpt && post.excerpt ? strip_html(post.excerpt) : post_summary(post) %>
+            <% if (summary) { %>
+            <div class="excerpt"><%= summary %></div>
+            <% } %>
+            <div class="time">
+                <span>
+                    <% if (!post.no_date) { %><time datetime="<%= post.date.toISOString() %>"><%= date(post.date, 'YYYY年M月D日') %></time> · <% } %><%= __('reading_minutes', reading_minutes(post)) %>
+                </span>
+                <span class="more"><%= __('read_post') %> ›</span>
+            </div>
+        </div>
+    </a>
+</article>

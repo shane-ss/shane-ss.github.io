@@ -1,11 +1,11 @@
 .divider, hr {
     border: none;
-    border-top: 1px solid var(--white-1);
-    margin: 32px auto;
+    border-top: 1px solid var(--border-color);
+    margin: 40px auto;
 }
 
 .divider {
-    margin: 64px auto;
+    margin: 48px auto;
 }
 
 img {
@@ -13,24 +13,25 @@ img {
 }
 
 ::marker {
-    color: var(--black-4);
+    color: var(--grey);
 }
 
 blockquote {
-    border-left: 4px solid var(--white-2);
+    border-left: 3px solid var(--link);
 }
 
 pre, code {
-    font-family: 'JetBrains Mono', 'Courier New', Courier, monospace;
+    font-family: "SF Mono", "JetBrains Mono", "Cascadia Code", Menlo, Consolas, "Courier New", monospace;
 }
 
 pre {
     font-size: 14px;
+    line-height: 1.6;
 }
 
 code {
-    font-size: 12px;
-    background-color: var(--white-1);
-    padding: 2px 4px;
-    border-radius: 4px;
+    font-size: .85em;
+    background-color: var(--inline-code-bg);
+    padding: .15em .4em;
+    border-radius: 6px;
 }
