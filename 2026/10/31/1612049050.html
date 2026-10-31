@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head prefix="og: https://ogp.me/ns#">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <script>if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('js-reveal')</script>
+  
+  
+  <title>让 Tailscale 绕开 v2rayN 的 TUN：解决 P2P 直连失败 - Shane</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+    <link rel='manifest' href='/manifest.json'>
+  
+
+  
+  
+  
+  <meta property="og:title" content="让 Tailscale 绕开 v2rayN 的 TUN：解决 P2P 直连失败 - Shane" />
+  
+  <meta property="og:type" content="article" />
+  
+  <meta property="og:url" content="https://shane-ss.github.io/2026/10/31/1612049050.html" />
+  
+  <meta property="og:image" content="/favicon.ico" />
+  
+  <meta property="og:article:published_time" content="2026-10-31T17:20:00.000Z" />
+  
+  <meta property="og:article:author" content="Shane" />
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/toc.css">
+
+  
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+  
+  
+  
+  
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+    <body
+        data-color-scheme="auto"
+        data-uppercase-categories="false"
+        
+        data-config-root="/"
+        
+        data-toc="true"
+        data-toc-max-depth="2"
+        
+        
+    >
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">Shane</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">主页</a>
+            
+            
+            <a class="nav-item" href="/archives/">归档</a>
+            
+            
+            
+            <a class="nav-item" href="/tags/">标签</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/shane-ss" target="_blank" aria-label="GitHub">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        
+<div class="reading-progress" aria-hidden="true"></div>
+<article class="post">
+    <div class="meta">
+        
+
+        <div class="date" id="date">
+            
+            <time datetime="2026-10-31T17:20:00.000Z">2026年10月31日</time>
+            
+            <span>约 1 分钟</span>
+        </div>
+
+        <h1 class="title">让 Tailscale 绕开 v2rayN 的 TUN：解决 P2P 直连失败</h1>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <h1 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h1><p>Windows 上同时开着 v2rayN 的 TUN 模式（sing-box 核心）和 Tailscale，Tailscale 的 P2P 连接不稳定。</p>
+<h1 id="现象"><a href="#现象" class="headerlink" title="现象"></a>现象</h1><ul>
+<li><code>tailscale status</code> 显示路径在 <code>direct</code> 和 <code>relay</code> 之间来回跳，ping 虚拟机大量丢包。</li>
+<li><code>tailscale netcheck</code> 显示的公网 IP 不是本机宽带的，最近的 DERP 在国外，各节点延迟也几乎一样。</li>
+<li><code>ping -6</code> 任何地址都报 <code>General failure</code>。</li>
+</ul>
+<h1 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h1><p><strong>1. 让 Tailscale 的 UDP 直连</strong></p>
+<p>在「设置 → 路由设置」里打开当前规则集，从剪贴板导入下面的规则（不要替换原有规则），然后置顶：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">[</span></span><br><span class="line">  <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;remarks&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Tailscale UDP direct&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;outboundTag&quot;</span><span class="punctuation">:</span> <span class="string">&quot;direct&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;network&quot;</span><span class="punctuation">:</span> <span class="string">&quot;udp&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;process&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;tailscaled.exe&quot;</span><span class="punctuation">,</span> <span class="string">&quot;tailscale.exe&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;enabled&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>2. 添加系统代理例外</strong></p>
+<p>在「设置 → 参数设置 → 系统代理设置」的例外列表末尾加上：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">;100.*</span><br></pre></td></tr></table></figure>
+
+<p><strong>3. 关闭严格路由</strong></p>
+<p>在「设置 → 参数设置 → TUN 模式设置」里关闭严格路由（Strict Route），然后重启服务。</p>
+<p>关闭后 DNS 泄漏的风险会略微上升。</p>
+<h1 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tailscale ping &lt;对端设备名&gt;</span><br></pre></td></tr></table></figure>
+
+<p>看到 <code>via &lt;IP&gt;:&lt;端口&gt;</code> 就是直连，<code>via DERP</code> 则是中继。我这边修复后是 IPv6 直连，到虚拟机的 ping 30 个全通。</p>
+
+    </div>
+
+    
+    <div class="about">
+        <h1>关于本文</h1>
+        <div class="details">
+            <p>由 Shane 撰写, 采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a> 许可协议.</p>
+        </div>
+        
+        <p class="tags">
+            
+            <a href="/tags/网络/" class="tag">#网络</a><a href="/tags/Tailscale/" class="tag">#Tailscale</a><a href="/tags/v2rayN/" class="tag">#v2rayN</a><a href="/tags/sing-box/" class="tag">#sing-box</a>
+        </p>
+        
+    </div>
+    
+
+    <div class="container post-prev-next">
+        
+        <a href="/2026/10/31/3566779901.html" class="next">
+            <div>
+                <div class="text">
+                    <p class="label">下一篇</p>
+                    <h3 class="title">用 USB/IP 在两台 Windows 之间共享 USB 设备</h3>
+                </div>
+            </div>
+        </a>
+        
+        
+        <a href="/2025/04/25/3143598400.html" class="prev">
+            <div>
+                <div class="text">
+                    <p class="label">上一篇</p>
+                    <h3 class="title">VScode搭建QT开发环境</h3>
+                </div>
+            </div>
+        </a>
+        
+    </div>
+
+    
+        
+        
+    
+</article>
+
+        <footer>
+    <div class="inner">
+        <div class="copyright">
+            <span>&copy; 2026 Shane</span><span class="sep">|</span><span>由 <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> 驱动</span>
+            
+        </div>
+        
+        <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+            <label>
+                <input type="radio" value="light">
+                <span>浅色</span>
+            </label>
+            <label>
+                <input type="radio" value="dark">
+                <span>深色</span>
+            </label>
+            <label>
+                <input type="radio" value="auto">
+                <span>自动</span>
+            </label>
+        </div>
+        
+    </div>
+</footer>
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+        
+        
+
+    </body>
+</html>

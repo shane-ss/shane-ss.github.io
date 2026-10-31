@@ -1,0 +1,134 @@
+/* Apple-style palette. Light values first, dark values are applied
+   either by the OS (auto) or by the color scheme toggle (dark). */
+body[data-color-scheme="auto"], body[data-color-scheme="light"] {
+    --white-opacity-8: rgba(251, 251, 253, .72);
+    --white-1-opacity-8: rgba(232, 232, 237, .8);
+    --white: #fff;
+    --white-1: #e8e8ed;
+    --white-2: #d2d2d7;
+
+    --grey: #86868b;
+
+    --black: #1d1d1f;
+    --black-1: #424245;
+    --black-2: #1d1d1f;
+    --black-4: #6e6e73;
+
+    --border-color: rgba(0, 0, 0, .08);
+
+    --link: #0066cc;
+
+    --blur: saturate(180%) blur(20px);
+
+    --blue: #0071e3;
+    --white-txt-on-blue-bg: #fff;
+
+    --nav-bg: var(--white-opacity-8);
+
+    --footer-link-grey: #6e6e73;
+
+    --body-bg: #f5f5f7;
+    --post-bg: #fff;
+    --card-bg: #fff;
+    --card-bg-hover: #fff;
+    --card-title: #1d1d1f;
+    --card-time: #86868b;
+    --card-shadow: 0 4px 24px rgba(0, 0, 0, .04);
+    --card-shadow-hover: 0 18px 48px rgba(0, 0, 0, .12);
+    --code-bg: #f5f5f7;
+    --inline-code-bg: rgba(0, 0, 0, .05);
+    --date-txt: #86868b;
+
+    --hero-gradient: linear-gradient(100deg, #0071e3 0%, #7d4dff 45%, #e84393 75%, #ff8a00 100%);
+    --hero-glow: radial-gradient(60% 50% at 50% 40%, rgba(125, 77, 255, .10), transparent 70%);
+
+    --nav-arrow: #1d1d1f;
+}
+
+@media (prefers-color-scheme: dark) {
+    body[data-color-scheme="auto"] {
+        --white-opacity-8: rgba(22, 22, 23, .72);
+        --white-1-opacity-8: rgba(44, 44, 46, .8);
+        --white: #000;
+        --white-1: #2c2c2e;
+        --white-2: #424245;
+
+        --grey: #86868b;
+
+        --black: #f5f5f7;
+        --black-1: #a1a1a6;
+        --black-2: #f5f5f7;
+        --black-4: #a1a1a6;
+
+        --border-color: rgba(255, 255, 255, .1);
+
+        --link: #2997ff;
+
+        --blue: #0071e3;
+        --white-txt-on-blue-bg: #fff;
+
+        --nav-bg: var(--white-opacity-8);
+
+        --footer-link-grey: #86868b;
+
+        --body-bg: #000;
+        --post-bg: #000;
+        --card-bg: #1c1c1e;
+        --card-bg-hover: #232325;
+        --card-title: #f5f5f7;
+        --card-time: #86868b;
+        --card-shadow: none;
+        --card-shadow-hover: 0 18px 48px rgba(0, 0, 0, .6);
+        --code-bg: #1c1c1e;
+        --inline-code-bg: rgba(255, 255, 255, .1);
+        --date-txt: #86868b;
+
+        --hero-gradient: linear-gradient(100deg, #2997ff 0%, #a77dff 45%, #ff6fb5 75%, #ffb340 100%);
+        --hero-glow: radial-gradient(60% 50% at 50% 40%, rgba(125, 77, 255, .22), transparent 70%);
+
+        --nav-arrow: #f5f5f7;
+    }
+}
+
+body[data-color-scheme="dark"] {
+    --white-opacity-8: rgba(22, 22, 23, .72);
+    --white-1-opacity-8: rgba(44, 44, 46, .8);
+    --white: #000;
+    --white-1: #2c2c2e;
+    --white-2: #424245;
+
+    --grey: #86868b;
+
+    --black: #f5f5f7;
+    --black-1: #a1a1a6;
+    --black-2: #f5f5f7;
+    --black-4: #a1a1a6;
+
+    --border-color: rgba(255, 255, 255, .1);
+
+    --link: #2997ff;
+
+    --blue: #0071e3;
+    --white-txt-on-blue-bg: #fff;
+
+    --nav-bg: var(--white-opacity-8);
+
+    --footer-link-grey: #86868b;
+
+    --body-bg: #000;
+    --post-bg: #000;
+    --card-bg: #1c1c1e;
+    --card-bg-hover: #232325;
+    --card-title: #f5f5f7;
+    --card-time: #86868b;
+    --card-shadow: none;
+    --card-shadow-hover: 0 18px 48px rgba(0, 0, 0, .6);
+    --code-bg: #1c1c1e;
+    --inline-code-bg: rgba(255, 255, 255, .1);
+    --date-txt: #86868b;
+
+    --hero-gradient: linear-gradient(100deg, #2997ff 0%, #a77dff 45%, #ff6fb5 75%, #ffb340 100%);
+    --hero-glow: radial-gradient(60% 50% at 50% 40%, rgba(125, 77, 255, .22), transparent 70%);
+
+    --nav-arrow: #f5f5f7;
+}

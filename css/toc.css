@@ -1,0 +1,48 @@
+.toc {
+  box-sizing: border-box;
+  max-width: calc(800px - 16px * 2) !important;
+  padding: 20px 24px !important;
+  border-radius: 18px;
+  background-color: var(--code-bg);
+}
+
+.toc::before {
+  content: "目录";
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  color: var(--grey);
+  margin-bottom: 8px;
+}
+
+.toc > p {
+  margin: 0;
+}
+
+.toc > p > a {
+  color: var(--black-4);
+  text-decoration: none;
+  display: inline-block;
+  padding: 5px 0;
+  font-size: 16px;
+  transition: color 0.2s;
+}
+
+.toc > p > a:hover,
+.toc > p > a:focus-visible {
+  color: var(--link);
+  text-decoration: none;
+}
+
+.toc > p > a.active {
+  color: var(--black);
+  font-weight: 600;
+}
+
+@media screen and (max-width: 800px) {
+  .toc {
+    margin-left: 16px !important;
+    margin-right: 16px !important;
+  }
+}

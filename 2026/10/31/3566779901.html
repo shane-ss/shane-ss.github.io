@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head prefix="og: https://ogp.me/ns#">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <script>if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('js-reveal')</script>
+  
+  
+  <title>用 USB/IP 在两台 Windows 之间共享 USB 设备 - Shane</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+    <link rel='manifest' href='/manifest.json'>
+  
+
+  
+  
+  
+  <meta property="og:title" content="用 USB/IP 在两台 Windows 之间共享 USB 设备 - Shane" />
+  
+  <meta property="og:type" content="article" />
+  
+  <meta property="og:url" content="https://shane-ss.github.io/2026/10/31/3566779901.html" />
+  
+  <meta property="og:image" content="/favicon.ico" />
+  
+  <meta property="og:article:published_time" content="2026-10-31T18:00:00.000Z" />
+  
+  <meta property="og:article:author" content="Shane" />
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/toc.css">
+
+  
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+  
+  
+  
+  
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+    <body
+        data-color-scheme="auto"
+        data-uppercase-categories="false"
+        
+        data-config-root="/"
+        
+        data-toc="true"
+        data-toc-max-depth="2"
+        
+        
+    >
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">Shane</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">主页</a>
+            
+            
+            <a class="nav-item" href="/archives/">归档</a>
+            
+            
+            
+            <a class="nav-item" href="/tags/">标签</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/shane-ss" target="_blank" aria-label="GitHub">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        
+<div class="reading-progress" aria-hidden="true"></div>
+<article class="post">
+    <div class="meta">
+        
+
+        <div class="date" id="date">
+            
+            <time datetime="2026-10-31T18:00:00.000Z">2026年10月31日</time>
+            
+            <span>约 2 分钟</span>
+        </div>
+
+        <h1 class="title">用 USB/IP 在两台 Windows 之间共享 USB 设备</h1>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <h1 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h1><p>用 VirtualHere 共享 USB 设备时，客户端报错：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">When running the Client as a Service you can only connect to purchased servers</span><br></pre></td></tr></table></figure>
+
+<p>客户端以服务模式运行时，只能连接已购买授权的服务器。而且未授权的服务器同时只能共享一个设备，所以我换成了开源免费的 USB&#x2F;IP。</p>
+<ul>
+<li>服务端（接 USB 设备的电脑）：<code>usbipd-win</code></li>
+<li>客户端（使用设备的电脑）：<code>usbip-win2</code></li>
+</ul>
+<p>下面的命令都在管理员终端里运行。</p>
+<h1 id="安装服务端"><a href="#安装服务端" class="headerlink" title="安装服务端"></a>安装服务端</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">winget install usbipd</span><br></pre></td></tr></table></figure>
+
+<p>如果装错了电脑，先取消所有共享，再卸载：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">usbipd unbind --all</span><br><span class="line">winget uninstall usbipd</span><br></pre></td></tr></table></figure>
+
+<h1 id="共享设备"><a href="#共享设备" class="headerlink" title="共享设备"></a>共享设备</h1><p>查看设备的 BUSID：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">usbipd list</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">BUSID  VID:PID    DEVICE                    STATE</span><br><span class="line">3-1    1a86:7523  USB-SERIAL CH340 (COM4)   Not shared</span><br><span class="line">3-3    0483:3748  STM32 STLink              Not shared</span><br></pre></td></tr></table></figure>
+
+<p>共享需要的设备，这里以 CH340 为例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">usbipd <span class="built_in">bind</span> --busid 3-1</span><br></pre></td></tr></table></figure>
+
+<p>状态变成 <code>Shared</code> 就可以了。这个设置重启后依然保留，所以每个设备只需操作一次。</p>
+<h1 id="放行端口"><a href="#放行端口" class="headerlink" title="放行端口"></a>放行端口</h1><p>USB&#x2F;IP 使用 TCP 3240 端口。客户端连不上时，在服务端的 CMD 中添加防火墙规则：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netsh advfirewall firewall add rule name=<span class="string">&quot;usbipd TCP 3240&quot;</span> <span class="built_in">dir</span>=<span class="keyword">in</span> action=allow protocol=TCP localport=3240 profile=any</span><br></pre></td></tr></table></figure>
+
+<p>确认服务正在运行，端口也在监听：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sc query usbipd</span><br><span class="line">netstat -ano | findstr :3240</span><br></pre></td></tr></table></figure>
+
+<p>然后在客户端的 PowerShell 中测试，看到 <code>TcpTestSucceeded : True</code> 就说明端口通了：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Test-NetConnection</span> &lt;服务端IP&gt; <span class="literal">-Port</span> <span class="number">3240</span></span><br></pre></td></tr></table></figure>
+
+<p>如果还是不通，可以再检查这几项：</p>
+<ul>
+<li>第三方安全软件的防火墙是否拦截了 3240 端口。</li>
+<li>IP 是否为两台电脑实际互通的网卡地址，而不是虚拟网卡的地址。</li>
+<li>两台电脑是否在同一网段，VPN 或路由器的 AP 隔离也可能阻止互访。</li>
+</ul>
+<h1 id="安装客户端"><a href="#安装客户端" class="headerlink" title="安装客户端"></a>安装客户端</h1><p>从 <a target="_blank" rel="noopener" href="https://github.com/vadimgrn/usbip-win2/releases">usbip-win2 Releases</a> 下载并安装。它带图形界面，也可以用命令行。</p>
+<p>查看服务端共享的设备：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">usbip list -r &lt;服务端IP&gt;</span><br></pre></td></tr></table></figure>
+
+<p>连接设备：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">usbip attach -r &lt;服务端IP&gt; -b 3-1</span><br></pre></td></tr></table></figure>
+
+<h1 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h1><ul>
+<li>服务端运行 <code>usbipd list</code>，设备状态变为 <code>Attached</code>。</li>
+<li>客户端设备管理器的「端口」下出现 CH340，COM 编号可能和服务端不同。</li>
+</ul>
+<p>如果显示未知设备，在客户端安装对应的驱动，这里是 CH340 驱动。</p>
+<h1 id="备注"><a href="#备注" class="headerlink" title="备注"></a>备注</h1><p><strong><code>hrdevmon</code> 警告</strong></p>
+<p>运行 <code>usbipd</code> 时可能看到这条警告：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">usbipd: warning: Unknown USB filter &#x27;hrdevmon&#x27; may be incompatible with this software; &#x27;bind --force&#x27; may be required.</span><br></pre></td></tr></table></figure>
+
+<p>这是第三方 USB 过滤驱动触发的提示，只是可能不兼容。设备能正常连接就不用管。如果 <code>list</code> 能看到设备，但连接失败或连接后不能用，再强制共享：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">usbipd <span class="built_in">bind</span> --force --busid 3-1</span><br></pre></td></tr></table></figure>
+
+<p>强制共享后，即使没有客户端连接，服务端本机也可能无法使用这个设备。恢复本机使用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">usbipd unbind --busid 3-1</span><br></pre></td></tr></table></figure>
+
+<p><strong>图形界面</strong></p>
+<p><code>usbipd-win</code> 官方没有图形界面，不过服务端基本只需配置一次，用命令行就够了。日常连接和断开都在客户端操作。</p>
+
+    </div>
+
+    
+    <div class="about">
+        <h1>关于本文</h1>
+        <div class="details">
+            <p>由 Shane 撰写, 采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a> 许可协议.</p>
+        </div>
+        
+        <p class="tags">
+            
+            <a href="/tags/USB-IP/" class="tag">#USB/IP</a><a href="/tags/usbipd/" class="tag">#usbipd</a><a href="/tags/Windows/" class="tag">#Windows</a><a href="/tags/网络/" class="tag">#网络</a>
+        </p>
+        
+    </div>
+    
+
+    <div class="container post-prev-next">
+        <a class="next"></a>
+        
+        <a href="/2026/10/31/1612049050.html" class="prev">
+            <div>
+                <div class="text">
+                    <p class="label">上一篇</p>
+                    <h3 class="title">让 Tailscale 绕开 v2rayN 的 TUN：解决 P2P 直连失败</h3>
+                </div>
+            </div>
+        </a>
+        
+    </div>
+
+    
+        
+        
+    
+</article>
+
+        <footer>
+    <div class="inner">
+        <div class="copyright">
+            <span>&copy; 2026 Shane</span><span class="sep">|</span><span>由 <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> 驱动</span>
+            
+        </div>
+        
+        <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+            <label>
+                <input type="radio" value="light">
+                <span>浅色</span>
+            </label>
+            <label>
+                <input type="radio" value="dark">
+                <span>深色</span>
+            </label>
+            <label>
+                <input type="radio" value="auto">
+                <span>自动</span>
+            </label>
+        </div>
+        
+    </div>
+</footer>
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+        
+        
+
+    </body>
+</html>
