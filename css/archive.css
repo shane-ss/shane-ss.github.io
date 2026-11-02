@@ -1,0 +1,26 @@
+.meta {
+  margin-top: 72px;
+}
+
+.container > .meta > * {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.meta .type {
+  color: var(--grey);
+  font-weight: 600;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0;
+}
+
+.meta .count {
+  color: var(--grey);
+  font-size: 17px;
+  font-weight: 500;
+  max-width: 800px;
+  margin: 8px auto 0;
+  padding: 0 16px;
+}

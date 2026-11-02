@@ -1,0 +1,221 @@
+.post-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  max-width: 980px;
+  margin: auto;
+  margin-bottom: 64px;
+}
+
+@media screen and (max-width: 700px) {
+  .post-list {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+.post-list-item {
+  overflow: hidden;
+  border-radius: 18px;
+  background-color: var(--card-bg);
+  box-shadow: var(--card-shadow);
+  transition: transform 400ms cubic-bezier(.16, 1, .3, 1), box-shadow 400ms cubic-bezier(.16, 1, .3, 1), background-color 200ms;
+}
+
+.post-list-item:hover,
+.post-list-item:focus-within {
+  transform: translateY(-4px);
+  box-shadow: var(--card-shadow-hover);
+  background-color: var(--card-bg-hover);
+}
+
+/* The newest post on the home page gets the full row */
+.post-list.home .post-list-item:first-child {
+  grid-column: 1 / -1;
+}
+
+.post-list.home .post-list-item:first-child .title {
+  font-size: 34px;
+}
+
+.post-list.home .post-list-item:first-child .excerpt {
+  -webkit-line-clamp: 2;
+  max-width: 44em;
+}
+
+@media screen and (max-width: 700px) {
+  .post-list.home .post-list-item:first-child .title {
+    font-size: 26px;
+  }
+}
+
+.post-list-item > a {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.post-list-item .cover-img {
+  overflow: hidden;
+  height: 240px;
+}
+
+.post-list-item .cover-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 600ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.post-list-item:hover .cover-img img,
+.post-list-item > a:focus .cover-img img {
+  transform: scale(1.04);
+}
+
+.post-list-item .content {
+  padding: 30px 32px 28px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+@media screen and (max-width: 600px) {
+  .post-list-item .content {
+    padding: 24px;
+  }
+}
+
+.post-list-item a,
+.post-list-item a:hover,
+.post-list-item a:focus,
+.post-list-item a:active,
+.post-list-item a:link,
+.post-list-item a:visited {
+  color: var(--black);
+  text-decoration: none;
+}
+
+.post-list-item .eyebrow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  color: var(--grey);
+}
+
+.post-list-item .title {
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -.005em;
+  color: var(--card-title);
+}
+
+.post-list-item .excerpt {
+  margin-top: 10px;
+  font-size: 15px;
+  line-height: 1.6;
+  font-weight: 400;
+  color: var(--black-4);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+.post-list-item .time {
+  margin-top: auto;
+  padding-top: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--card-time);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.post-list-item .time .more {
+  color: var(--link);
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity .3s, transform .3s;
+}
+
+.post-list-item:hover .time .more,
+.post-list-item:focus-within .time .more {
+  opacity: 1;
+  transform: none;
+}
+
+/* in archive page, use a more compact list view */
+
+.post-list.archives {
+  display: block;
+  max-width: 800px;
+  margin: auto;
+  margin-bottom: 96px;
+}
+
+.post-list.archives .year {
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--black-4);
+  margin: 40px 0 8px;
+}
+
+.post-list.archives .year:first-child {
+  margin-top: 0;
+}
+
+.post-list.archives .post-list-item {
+  border-radius: 0;
+  background-color: transparent;
+  box-shadow: none;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.post-list.archives .post-list-item:hover {
+  transform: none;
+}
+
+.post-list.archives .post-list-item a {
+  flex-direction: row;
+  align-items: baseline;
+  gap: 20px;
+  padding: 18px 0;
+}
+
+.post-list.archives .post-list-item .date {
+  flex-shrink: 0;
+  width: 56px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--grey);
+  font-variant-numeric: tabular-nums;
+}
+
+.post-list.archives .post-list-item .title {
+  font-size: 19px;
+  font-weight: 600;
+  transition: color .2s;
+}
+
+.post-list.archives .post-list-item:hover .title {
+  color: var(--link);
+}
+
+.post-list.archives .post-list-item .tags-inline {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--grey);
+  white-space: nowrap;
+}
+
+@media screen and (max-width: 600px) {
+  .post-list.archives .post-list-item .tags-inline {
+    display: none;
+  }
+}

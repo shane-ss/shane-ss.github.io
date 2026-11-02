@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head prefix="og: https://ogp.me/ns#">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <script>if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('js-reveal')</script>
+  
+  
+  <title>DWMAC-RK驱动解析 - Shane</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+    <link rel='manifest' href='/manifest.json'>
+  
+
+  
+  
+  
+  <meta property="og:title" content="DWMAC-RK驱动解析 - Shane" />
+  
+  <meta property="og:type" content="article" />
+  
+  <meta property="og:url" content="https://shane-ss.github.io/2024/11/17/828693369.html" />
+  
+  <meta property="og:image" content="/favicon.ico" />
+  
+  <meta property="og:article:published_time" content="2024-11-17T14:51:20.000Z" />
+  
+  <meta property="og:article:author" content="Shane" />
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/toc.css">
+
+  
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+  
+  
+  
+  
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+    <body
+        data-color-scheme="auto"
+        data-uppercase-categories="false"
+        
+        data-config-root="/"
+        
+        data-toc="true"
+        data-toc-max-depth="2"
+        
+        
+    >
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">Shane</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">主页</a>
+            
+            
+            <a class="nav-item" href="/archives/">归档</a>
+            
+            
+            
+            <a class="nav-item" href="/tags/">标签</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/shane-ss" target="_blank" aria-label="GitHub">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        
+<div class="reading-progress" aria-hidden="true"></div>
+<article class="post">
+    <div class="meta">
+        
+
+        <div class="date" id="date">
+            
+            <time datetime="2024-11-17T14:51:20.000Z">2024年11月17日</time>
+            
+            <span>约 4 分钟</span>
+        </div>
+
+        <h1 class="title">DWMAC-RK驱动解析</h1>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <h1 id="PHY"><a href="#PHY" class="headerlink" title="PHY"></a>PHY</h1><p>PHY芯片通常都符合IEEE标准。IEEE 802.3标准定义了一组标准的MII管理寄存器（如控制寄存器和状态寄存器）。这些标准寄存器通常编号为0到15。</p>
+<h2 id="标准寄存器列表-Registers-0–15"><a href="#标准寄存器列表-Registers-0–15" class="headerlink" title="标准寄存器列表 (Registers 0–15)"></a>标准寄存器列表 (Registers 0–15)</h2><p><strong>寄存器 0: 基本控制寄存器（Basic Control Register, BMCR）</strong></p>
+<ul>
+<li>控制PHY的主要操作，例如复位、速度选择、自动协商启用等。</li>
+</ul>
+<p><strong>寄存器 1: 基本状态寄存器（Basic Status Register, BMSR）</strong></p>
+<ul>
+<li>提供PHY的运行状态信息，包括连接状态、能力信息等。</li>
+</ul>
+<p><strong>寄存器 2: PHY标识1（PHY Identifier 1, PHYIDR1）</strong></p>
+<ul>
+<li>PHY芯片制造商的标识部分，高16位。</li>
+</ul>
+<p><strong>寄存器 3: PHY标识2（PHY Identifier 2, PHYIDR2）</strong></p>
+<ul>
+<li>PHY芯片制造商的标识部分，低16位，包括供应商模型号和版本号。</li>
+</ul>
+<p><strong>寄存器 4: 自动协商广告寄存器（Auto-Negotiation Advertisement, ANAR）</strong></p>
+<ul>
+<li>描述PHY支持的通信能力，如速度和双工模式。</li>
+</ul>
+<p><strong>寄存器 5: 链路伙伴能力寄存器（Link Partner Ability, ANLPAR）</strong></p>
+<ul>
+<li>显示链路对端设备的能力。</li>
+</ul>
+<p><strong>寄存器 6: 自动协商扩展寄存器（Auto-Negotiation Expansion, ANER）</strong></p>
+<ul>
+<li>提供有关自动协商过程的额外信息。</li>
+</ul>
+<p><strong>寄存器 7: 下一个页面传输寄存器（Next Page Transmit, ANNPTR）</strong></p>
+<ul>
+<li>用于支持下一页传输。</li>
+</ul>
+<p><strong>寄存器 8: 链路伙伴下一页寄存器（Link Partner Next Page, ANLPNPR）</strong></p>
+<ul>
+<li>显示链路对端发送的下一页信息。</li>
+</ul>
+<p><strong>寄存器 9: 1000BASE-T能力寄存器（1000BASE-T Control, MSEADR）</strong></p>
+<ul>
+<li>描述PHY对千兆以太网能力的支持。</li>
+</ul>
+<p><strong>寄存器 10: 1000BASE-T状态寄存器（1000BASE-T Status, MSEADR）</strong></p>
+<pre><code>- 显示千兆以太网的状态信息。
+</code></pre>
+<p><strong>寄存器 11–15: 保留（Reserved）</strong></p>
+<pre><code>- 通常为厂商定义的扩展寄存器。
+</code></pre>
+<p>寄存器地址为<code>0x0</code>至<code>0xF</code>，通过MII（Management Data Input&#x2F;Output）总线访问。</p>
+<h1 id="DWMAC简介"><a href="#DWMAC简介" class="headerlink" title="DWMAC简介"></a>DWMAC简介</h1><p>DWMAC（DesignWare MAC，简称DWMAC）是由Synopsys公司设计的一种网络控制器IP核心，属于DesignWare系列的以太网媒体访问控制器（Ethernet Media Access Controller，MAC）。DWMAC主要应用于嵌入式设备、片上系统（SoC）以及支持以太网通信的设备中。</p>
+<h1 id="DWMAC-RK驱动解析"><a href="#DWMAC-RK驱动解析" class="headerlink" title="DWMAC-RK驱动解析"></a>DWMAC-RK驱动解析</h1><p>RK3568的GMAC设备描述在<strong>rk3568.dtsi</strong>文件中可以找到。根据设备树描述可知，RK3568的GMAC控制器使用的是新思科技提供的IP核，型号是<strong>dwmac-4.20a</strong>。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">gmac0: ethernet@fe2a0000 &#123;</span><br><span class="line">    compatible = &quot;rockchip,rk3568-gmac&quot;, &quot;snps,dwmac-4.20a&quot;;</span><br><span class="line">    reg = &lt;0x0 0xfe2a0000 0x0 0x10000&gt;;</span><br><span class="line">    interrupts = &lt;GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH&gt;,</span><br><span class="line">             &lt;GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH&gt;;</span><br><span class="line">    interrupt-names = &quot;macirq&quot;, &quot;eth_wake_irq&quot;;</span><br><span class="line">    rockchip,grf = &lt;&amp;grf&gt;;</span><br><span class="line">    clocks = &lt;&amp;cru SCLK_GMAC0&gt;, &lt;&amp;cru SCLK_GMAC0_RX_TX&gt;,</span><br><span class="line">         &lt;&amp;cru SCLK_GMAC0_RX_TX&gt;, &lt;&amp;cru CLK_MAC0_REFOUT&gt;,</span><br><span class="line">         &lt;&amp;cru ACLK_GMAC0&gt;, &lt;&amp;cru PCLK_GMAC0&gt;,</span><br><span class="line">         &lt;&amp;cru SCLK_GMAC0_RX_TX&gt;, &lt;&amp;cru CLK_GMAC0_PTP_REF&gt;,</span><br><span class="line">         &lt;&amp;cru PCLK_XPCS&gt;;</span><br><span class="line">    clock-names = &quot;stmmaceth&quot;, &quot;mac_clk_rx&quot;,</span><br><span class="line">              &quot;mac_clk_tx&quot;, &quot;clk_mac_refout&quot;,</span><br><span class="line">              &quot;aclk_mac&quot;, &quot;pclk_mac&quot;,</span><br><span class="line">              &quot;clk_mac_speed&quot;, &quot;ptp_ref&quot;,</span><br><span class="line">              &quot;pclk_xpcs&quot;;</span><br><span class="line">    resets = &lt;&amp;cru SRST_A_GMAC0&gt;;</span><br><span class="line">    reset-names = &quot;stmmaceth&quot;;</span><br><span class="line"></span><br><span class="line">    snps,mixed-burst;</span><br><span class="line">    snps,tso;</span><br><span class="line"></span><br><span class="line">    snps,axi-config = &lt;&amp;gmac0_stmmac_axi_setup&gt;;</span><br><span class="line">    snps,mtl-rx-config = &lt;&amp;gmac0_mtl_rx_setup&gt;;</span><br><span class="line">    snps,mtl-tx-config = &lt;&amp;gmac0_mtl_tx_setup&gt;;</span><br><span class="line">    status = &quot;disabled&quot;;</span><br><span class="line"></span><br><span class="line">    mdio0: mdio &#123;</span><br><span class="line">        compatible = &quot;snps,dwmac-mdio&quot;;</span><br><span class="line">        #address-cells = &lt;0x1&gt;;</span><br><span class="line">        #size-cells = &lt;0x0&gt;;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    gmac0_stmmac_axi_setup: stmmac-axi-config &#123;</span><br><span class="line">        snps,wr_osr_lmt = &lt;4&gt;;</span><br><span class="line">        snps,rd_osr_lmt = &lt;8&gt;;</span><br><span class="line">        snps,blen = &lt;0 0 0 0 16 8 4&gt;;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    gmac0_mtl_rx_setup: rx-queues-config &#123;</span><br><span class="line">        snps,rx-queues-to-use = &lt;1&gt;;</span><br><span class="line">        queue0 &#123;&#125;;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    gmac0_mtl_tx_setup: tx-queues-config &#123;</span><br><span class="line">        snps,tx-queues-to-use = &lt;1&gt;;</span><br><span class="line">        queue0 &#123;&#125;;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>驱动代码位于**&#x2F;kernel&#x2F;drivers&#x2F;net&#x2F;ethernet&#x2F;stmicro&#x2F;stmmac&#x2F;dwmac-rk.c**。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">platform_driver</span> <span class="title">rk_gmac_dwmac_driver</span> =</span> &#123;</span><br><span class="line">	.probe  = rk_gmac_probe,</span><br><span class="line">	.remove = rk_gmac_remove,</span><br><span class="line">	.driver = &#123;</span><br><span class="line">		.name           = <span class="string">&quot;rk_gmac-dwmac&quot;</span>,</span><br><span class="line">		.pm		= &amp;rk_gmac_pm_ops,</span><br><span class="line">		.of_match_table = rk_gmac_dwmac_match,</span><br><span class="line">	&#125;,</span><br><span class="line">&#125;;</span><br><span class="line">module_platform_driver(rk_gmac_dwmac_driver);</span><br></pre></td></tr></table></figure>
+
+<p><code>rk_gmac_probe</code>函数负责在设备和驱动匹配后初始化 Rockchip 的 GMAC 控制器驱动。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">rk_gmac_probe</span><span class="params">(<span class="keyword">struct</span> platform_device *pdev)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">plat_stmmacenet_data</span> *<span class="title">plat_dat</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">stmmac_resources</span> <span class="title">stmmac_res</span>;</span></span><br><span class="line">	<span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">rk_gmac_ops</span> *<span class="title">data</span>;</span></span><br><span class="line">	<span class="type">int</span> ret;</span><br><span class="line"></span><br><span class="line">	data = of_device_get_match_data(&amp;pdev-&gt;dev);</span><br><span class="line">	<span class="keyword">if</span> (!data) &#123;</span><br><span class="line">		dev_err(&amp;pdev-&gt;dev, <span class="string">&quot;no of match data provided\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> -EINVAL;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	ret = stmmac_get_platform_resources(pdev, &amp;stmmac_res);</span><br><span class="line">	<span class="keyword">if</span> (ret)</span><br><span class="line">		<span class="keyword">return</span> ret;</span><br><span class="line"></span><br><span class="line">	plat_dat = stmmac_probe_config_dt(pdev, &amp;stmmac_res.mac);</span><br><span class="line">	<span class="keyword">if</span> (IS_ERR(plat_dat))</span><br><span class="line">		<span class="keyword">return</span> PTR_ERR(plat_dat);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!of_device_is_compatible(pdev-&gt;dev.of_node, <span class="string">&quot;snps,dwmac-4.20a&quot;</span>))</span><br><span class="line">		plat_dat-&gt;has_gmac = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">	plat_dat-&gt;fix_mac_speed = rk_fix_speed;</span><br><span class="line">	plat_dat-&gt;get_eth_addr = rk_get_eth_addr;</span><br><span class="line"></span><br><span class="line">	plat_dat-&gt;bsp_priv = rk_gmac_setup(pdev, plat_dat, data);</span><br><span class="line">	<span class="keyword">if</span> (IS_ERR(plat_dat-&gt;bsp_priv)) &#123;</span><br><span class="line">		ret = PTR_ERR(plat_dat-&gt;bsp_priv);</span><br><span class="line">		<span class="keyword">goto</span> err_remove_config_dt;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	ret = rk_gmac_clk_init(plat_dat);</span><br><span class="line">	<span class="keyword">if</span> (ret)</span><br><span class="line">		<span class="keyword">goto</span> err_remove_config_dt;</span><br><span class="line"></span><br><span class="line">	ret = rk_gmac_powerup(plat_dat-&gt;bsp_priv);</span><br><span class="line">	<span class="keyword">if</span> (ret)</span><br><span class="line">		<span class="keyword">goto</span> err_remove_config_dt;</span><br><span class="line"></span><br><span class="line">	ret = stmmac_dvr_probe(&amp;pdev-&gt;dev, plat_dat, &amp;stmmac_res);</span><br><span class="line">	<span class="keyword">if</span> (ret)</span><br><span class="line">		<span class="keyword">goto</span> err_gmac_powerdown;</span><br><span class="line"></span><br><span class="line">	ret = dwmac_rk_create_loopback_sysfs(&amp;pdev-&gt;dev);</span><br><span class="line">	<span class="keyword">if</span> (ret)</span><br><span class="line">		<span class="keyword">goto</span> err_gmac_powerdown;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">err_gmac_powerdown:</span><br><span class="line">	rk_gmac_powerdown(plat_dat-&gt;bsp_priv);</span><br><span class="line">err_remove_config_dt:</span><br><span class="line">	stmmac_remove_config_dt(pdev, plat_dat);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>首先使用&#96;&#96;&#96;of_device_get_match_data&#96;&#96;函数用来匹配设备树中启用的GMAC驱动版本，如图：</p>
+<p><img src="/2024/11/17/828693369/image-20250110164114172.png" alt="image-20250110164114172"></p>
+<p><code>stmmac_get_platform_resources</code>函数用于从设备树中获取GMAC的中断号、唤醒终端号以及低功耗空闲模式中断号。并使用<code>platform_get_resource```接口获取GMAC控制器的物理内存地址，使用</code>devm_ioremap_resource&#96;&#96;接口映射这段内存地址，以方便接下来的操作。</p>
+<p><img src="/2024/11/17/828693369/image-20250110170234258.png" alt="image-20250110170234258"></p>
+<p><code>stmmac_probe_config_dt</code>函数有一点复杂。</p>
+
+    </div>
+
+    
+    <div class="about">
+        <h1>关于本文</h1>
+        <div class="details">
+            <p>由 Shane 撰写, 采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a> 许可协议.</p>
+        </div>
+        
+        <p class="tags">
+            
+            <a href="/tags/DWMAC/" class="tag">#DWMAC</a><a href="/tags/RK3568/" class="tag">#RK3568</a>
+        </p>
+        
+    </div>
+    
+
+    <div class="container post-prev-next">
+        
+        <a href="/2024/11/17/96817998.html" class="next">
+            <div>
+                <div class="text">
+                    <p class="label">下一篇</p>
+                    <h3 class="title">Micro Ros</h3>
+                </div>
+            </div>
+        </a>
+        
+        <a class="prev"></a>
+    </div>
+
+    
+        
+        
+    
+</article>
+
+        <footer>
+    <div class="inner">
+        <div class="copyright">
+            <span>&copy; 2026 Shane</span><span class="sep">|</span><span>由 <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> 驱动</span>
+            
+        </div>
+        
+        <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+            <label>
+                <input type="radio" value="light">
+                <span>浅色</span>
+            </label>
+            <label>
+                <input type="radio" value="dark">
+                <span>深色</span>
+            </label>
+            <label>
+                <input type="radio" value="auto">
+                <span>自动</span>
+            </label>
+        </div>
+        
+    </div>
+</footer>
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+        
+        
+
+    </body>
+</html>

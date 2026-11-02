@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head prefix="og: https://ogp.me/ns#">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <script>if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('js-reveal')</script>
+  
+  
+  <title>SM5396/BCM5396 排查丢包时值得盯的几个寄存器 - Shane</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+    <link rel='manifest' href='/manifest.json'>
+  
+
+  
+  
+  
+  <meta property="og:title" content="SM5396/BCM5396 排查丢包时值得盯的几个寄存器 - Shane" />
+  
+  <meta property="og:type" content="article" />
+  
+  <meta property="og:url" content="https://shane-ss.github.io/2026/11/02/852808280.html" />
+  
+  <meta property="og:image" content="/favicon.ico" />
+  
+  <meta property="og:article:published_time" content="2026-11-02T09:30:00.000Z" />
+  
+  <meta property="og:article:author" content="Shane" />
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/toc.css">
+
+  
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+  
+  
+  
+  
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+    <body
+        data-color-scheme="auto"
+        data-uppercase-categories="false"
+        
+        data-config-root="/"
+        
+        data-toc="true"
+        data-toc-max-depth="2"
+        
+        
+    >
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">Shane</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">主页</a>
+            
+            
+            <a class="nav-item" href="/archives/">归档</a>
+            
+            
+            
+            <a class="nav-item" href="/tags/">标签</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/shane-ss" target="_blank" aria-label="GitHub">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        
+<div class="reading-progress" aria-hidden="true"></div>
+<article class="post">
+    <div class="meta">
+        
+
+        <div class="date" id="date">
+            
+            <time datetime="2026-11-02T09:30:00.000Z">2026年11月2日</time>
+            
+            <span>约 3 分钟</span>
+        </div>
+
+        <h1 class="title">SM5396/BCM5396 排查丢包时值得盯的几个寄存器</h1>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <p>排查交换芯片丢包时，最费时间的往往是不知道该看哪里。这篇记录调试 SM5396 时最有用的几个寄存器，以及它们能回答什么问题。SM5396 的手册写明寄存器与 BCM5396 相同，所以细节要查 BCM5396 手册。</p>
+<h1 id="值得盯的寄存器"><a href="#值得盯的寄存器" class="headerlink" title="值得盯的寄存器"></a>值得盯的寄存器</h1><p>以下寄存器都在 SerDes 页，页号为 <code>0x10 + 端口号</code>。</p>
+<table>
+<thead>
+<tr>
+<th>寄存器</th>
+<th>作用</th>
+<th>要点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>STS1</code>（0x28）</td>
+<td>看链路状态和发生过的错误</td>
+<td>bit15:7 是锁存错误位，读清；bit6:0 是当前状态，其中 bit1 是 link</td>
+</tr>
+<tr>
+<td><code>ERR_CNT</code>（0x2E）</td>
+<td>统计误码和 CRC 错误</td>
+<td>高 8 位是 BER，累加，到 FF 封顶，用 <code>CTRL2</code> bit14 清零；低 8 位是 CRC，读清，到 FF 封顶</td>
+</tr>
+<tr>
+<td><code>CTRL1</code>（0x20）</td>
+<td>决定能不能数到 CRC</td>
+<td>bit7 <code>CRC_DIS</code> 默认为 1，也就是 CRC 检查默认关闭；bit11 决定 <code>ERR_CNT</code> 低 8 位计 CRC 还是接收包数</td>
+</tr>
+<tr>
+<td><code>MII_STS</code>（0x02）</td>
+<td>看 link 状态</td>
+<td>link 位锁存低，第一次读到的可能是历史状态，要读两次</td>
+</tr>
+</tbody></table>
+<p>有两点最容易漏掉：</p>
+<ul>
+<li>不打开 <code>CTRL1</code> 的 CRC 检查，CRC 计数就一直数不到，看起来像是链路没有问题。</li>
+<li><code>ERR_CNT</code> 的两部分清零方式不同，BER 要写 <code>CTRL2</code> 清零，CRC 读一次就清零。</li>
+</ul>
+<h2 id="STS1-的错误位"><a href="#STS1-的错误位" class="headerlink" title="STS1 的错误位"></a>STS1 的错误位</h2><p><code>STS1</code> 里最关键的是这三个错误位，它们能区分误码有没有造成丢包：</p>
+<ul>
+<li><code>TX_ERR</code>、<code>CRC_ERR</code>：误码落在帧内，这一帧丢失。</li>
+<li><code>FALSE_CRS</code>：误码落在帧间空闲，不丢包。</li>
+</ul>
+<h1 id="怎么看-BER-和-CRC"><a href="#怎么看-BER-和-CRC" class="headerlink" title="怎么看 BER 和 CRC"></a>怎么看 BER 和 CRC</h1><p><strong>BER 反映链路质量，CRC 反映实际丢帧。</strong> BER 高不一定丢包，要看误码是否落在帧内。</p>
+<p><strong>两者都是本端口接收方向的统计。</strong> 哪个口的计数高，就查发往这个口的那条路径，问题的方向由此确定。</p>
+<p><strong>BER 是定位利器。</strong> 丢包是低概率事件，要等很久才能碰上一次，而 BER 每秒都有数据。不用等丢包，每秒采样一次各端口的 BER，就能比较各条链路的好坏。有问题的链路通常一眼就能看出来，健康的端口 BER 基本为 0。</p>
+<p><strong>ping 的流量小，会掩盖问题。</strong> 每秒几百的 BER 也可能只丢一两个包，换成大流量可能严重得多。</p>
+<h1 id="排查方法"><a href="#排查方法" class="headerlink" title="排查方法"></a>排查方法</h1><ul>
+<li><strong>按路径分组看丢包。</strong> 对比哪些路径丢包、哪些不丢，找出丢包路径的共同点，能很快缩小范围。</li>
+<li><strong>把丢包和事件按时间对上。</strong> 丢包时刻对应上 <code>CRC_ERR</code>、<code>TX_ERR</code> 和 CRC 计数加一，才算证据成立。</li>
+<li><strong>先排除软件和 CPU 侧。</strong> 确认 MAC&#x2F;DMA 寄存器正常，交换芯片的配置与上电时的快照一致。</li>
+<li><strong>用 VLAN 隔离代替拆硬件。</strong> 硬件不方便动时，把可疑端口隔离出去。如果丢包消失而 BER 还在，就直接证明了丢包来源。</li>
+<li><strong>多次上电、多块板对比。</strong> 同一条链路每次上电的表现可能完全不同，只看一次容易下错结论。</li>
+</ul>
+<h1 id="访问寄存器的坑"><a href="#访问寄存器的坑" class="headerlink" title="访问寄存器的坑"></a>访问寄存器的坑</h1><ul>
+<li><strong>SM5396 没有 MIB。</strong> 读 BCM5396 的 MIB 页（P20h～P2Fh）不会应答，SPI 控制器的请求会一直挂着，只能复位。不要照搬 BCM5396 的 MIB 读取代码。</li>
+<li><strong>SPI 访问要有超时。</strong> 如果驱动一直等待应答，遇到读不回来的寄存器就会永久卡死。</li>
+<li><strong>SPI 访问要加锁。</strong> 驱动本身不一定有互斥，多任务访问时要自己保证。</li>
+<li><strong>读清寄存器只能有一个读者。</strong> 两个任务同时读，计数都不准。</li>
+<li><strong>监控任务的优先级要低于业务任务。</strong> SPI 轮询是忙等，优先级高了会压住业务任务，反而制造新问题。</li>
+</ul>
+<h1 id="其他容易踩的坑"><a href="#其他容易踩的坑" class="headerlink" title="其他容易踩的坑"></a>其他容易踩的坑</h1><ul>
+<li><strong>对端没报错不代表链路没问题。</strong> 交换芯片会丢掉坏帧，对端网卡看不到 CRC 错误。普通 ping 只是少一个 <code>icmp_seq</code>，丢包率低时很容易漏看。</li>
+<li><strong>强制模式下状态不一定可信。</strong> 应用指南说明，端口用 override（Page 00h，<code>0x60 + 端口号</code>）强制后，其状态寄存器 “not meaningful”。</li>
+<li><strong>隔离时注意环路。</strong> 外部互连的两个口放在同一 VLAN 会形成环路，隔离时要各放一个单独的 VLAN。</li>
+</ul>
+
+    </div>
+
+    
+    <div class="about">
+        <h1>关于本文</h1>
+        <div class="details">
+            <p>由 Shane 撰写, 采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a> 许可协议.</p>
+        </div>
+        
+        <p class="tags">
+            
+            <a href="/tags/SM5396/" class="tag">#SM5396</a><a href="/tags/BCM5396/" class="tag">#BCM5396</a><a href="/tags/交换机/" class="tag">#交换机</a><a href="/tags/SerDes/" class="tag">#SerDes</a><a href="/tags/嵌入式/" class="tag">#嵌入式</a>
+        </p>
+        
+    </div>
+    
+
+    <div class="container post-prev-next">
+        <a class="next"></a>
+        
+        <a href="/2026/10/31/3566779901.html" class="prev">
+            <div>
+                <div class="text">
+                    <p class="label">上一篇</p>
+                    <h3 class="title">用 USB/IP 在两台 Windows 之间共享 USB 设备</h3>
+                </div>
+            </div>
+        </a>
+        
+    </div>
+
+    
+        
+        
+    
+</article>
+
+        <footer>
+    <div class="inner">
+        <div class="copyright">
+            <span>&copy; 2026 Shane</span><span class="sep">|</span><span>由 <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> 驱动</span>
+            
+        </div>
+        
+        <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+            <label>
+                <input type="radio" value="light">
+                <span>浅色</span>
+            </label>
+            <label>
+                <input type="radio" value="dark">
+                <span>深色</span>
+            </label>
+            <label>
+                <input type="radio" value="auto">
+                <span>自动</span>
+            </label>
+        </div>
+        
+    </div>
+</footer>
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+        
+        
+
+    </body>
+</html>

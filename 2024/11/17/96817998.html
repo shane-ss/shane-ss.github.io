@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head prefix="og: https://ogp.me/ns#">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <script>if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('js-reveal')</script>
+  
+  
+  <title>Micro Ros - Shane</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+    <link rel='manifest' href='/manifest.json'>
+  
+
+  
+  
+  
+  <meta property="og:title" content="Micro Ros - Shane" />
+  
+  <meta property="og:type" content="article" />
+  
+  <meta property="og:url" content="https://shane-ss.github.io/2024/11/17/96817998.html" />
+  
+  <meta property="og:image" content="/favicon.ico" />
+  
+  <meta property="og:article:published_time" content="2024-11-17T14:51:20.000Z" />
+  
+  <meta property="og:article:author" content="Shane" />
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/toc.css">
+
+  
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+  
+  
+  
+  
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+    <body
+        data-color-scheme="auto"
+        data-uppercase-categories="false"
+        
+        data-config-root="/"
+        
+        data-toc="true"
+        data-toc-max-depth="2"
+        
+        
+    >
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">Shane</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">主页</a>
+            
+            
+            <a class="nav-item" href="/archives/">归档</a>
+            
+            
+            
+            <a class="nav-item" href="/tags/">标签</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/shane-ss" target="_blank" aria-label="GitHub">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        
+<div class="reading-progress" aria-hidden="true"></div>
+<article class="post">
+    <div class="meta">
+        
+
+        <div class="date" id="date">
+            
+            <time datetime="2024-11-17T14:51:20.000Z">2024年11月17日</time>
+            
+            <span>约 6 分钟</span>
+        </div>
+
+        <h1 class="title">Micro Ros</h1>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>大三的时候做了一个四足机器狗，当时想着能不能和ROS结合一下，但由于种种原因，只是草草的在Arduino上跑了跑例程，没能深入去研究学习。最近工作上需要用到Micro Ros，借着这个机会试试能不能更深入的学习一下。</p>
+<p><img src="/2024/11/17/96817998/fc24435c66be74e9b282ccfaa1c8cf77.png" alt="fc24435c66be74e9b282ccfaa1c8cf77"></p>
+<p><img src="/2024/11/17/96817998/image-20241124154809184.png" alt="image-20241124154809184"></p>
+<p>上图与本文无关，只是突然感概时间匆匆，所以将SBOT照片放在这里。</p>
+<p>因为对于ROS并没有过于深入的去了解过，只能重新开始学习了解。所以在写这篇文章的时候，对于如何组织文章的结构比较茫然，再三思考，反正只是一个学习的记录，暂时没必要把结构梳理得太清楚，索性学到哪儿写到哪儿，学到什么些什么。</p>
+<h1 id="编译libmicroros-a"><a href="#编译libmicroros-a" class="headerlink" title="编译libmicroros.a"></a>编译libmicroros.a</h1><p>因为工作上需要运行Micro Ros的芯片是一个Coretex A核的芯片，需要在RT-Thread上运行这个库。但是谷歌和Github上找了一下运行的方法，大概的步骤可以总结为：编译出对应平台上的<strong>libmicroros.a</strong>这个静态库接着是对接好相应的接口就可以了。</p>
+<p>这里也列出几个我参考的文章：</p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/548378504">在 RTOS 上移植 MicroROS (ROS2)</a></p>
+<p><a target="_blank" rel="noopener" href="https://club.rt-thread.org/ask/article/6bccb9124f78f873.html">在 RT-Thread上运行 micro ros</a></p>
+<p><a target="_blank" rel="noopener" href="https://micro.ros.org/docs/tutorials/advanced/create_custom_static_library/">Creating custom static micro-ROS library</a></p>
+<p>尝试了RT-Thread官方维护的<a target="_blank" rel="noopener" href="https://github.com/micro-ROS/micro_ros_rtthread_component">micro_ros_rtthread_component</a>跟着文档各种配置环境，但是最终以失败告终。接着我又尝试了用Docker编译官方维护的<a target="_blank" rel="noopener" href="https://github.com/micro-ROS/micro_ros_arduino">micro_ros_arduino</a>工程，经过一通乱搞，不出意外也失败了。最终选择还是选择用<a target="_blank" rel="noopener" href="https://github.com/micro-ROS/micro_ros_setup">micro-ros-setup</a>，至少不用再去配置Docker了。</p>
+<p>那么接下来开始吧，简单记录一下我如何编译出我需要的<strong>libmicroros.a</strong>。</p>
+<p>1、准备一个Ubuntu22.04的虚拟机，为了接下来的工作能够较为顺利的完成，不出现一些奇奇怪怪的环境问题，推荐使用22.04版本的Ubuntu。</p>
+<p>2、安装ROS2。因为micro_ros_setup其实是ROS的一个功能包，编译运行需要依赖ROS2，所以需要装上ROS2。</p>
+<p>安装学习ROS2可以参考鱼香ROS大佬的系列文章<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_27865227/article/details/131363638">ROS2机器人入门到实战</a>，安装教程<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_27865227/article/details/131365548">一键直达</a>。</p>
+<p>安装完成后一定记得执行一下命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;source /opt/ros/humble/setup.bash&quot; &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
+
+<p>将ROS添加到系统环境中。</p>
+<p>3、安装Git。</p>
+<p>已经安装过可以忽略此步骤，执行命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install git</span><br></pre></td></tr></table></figure>
+
+<p>后面需要用git克隆大量的仓库，但是再虚拟机中访问Github的仓库时候大概率会遇到网络问题。</p>
+<p>解决方法有两个。</p>
+<p><strong>解决方法一</strong></p>
+<p>第一种是使用”科技“。</p>
+<p>启动你的”科技“，在”科技“软件中启用局域网代理。</p>
+<p>进入windows的设置中，查看你的代理端口号，记住他，后面可能会经常用到。</p>
+<p><img src="/2024/11/17/96817998/image-20241124163023786.png" alt="image-20241124163023786"></p>
+<p>将虚拟机网卡设置为桥接模式。</p>
+<p><img src="/2024/11/17/96817998/image-20241124163142206.png" alt="image-20241124163142206"></p>
+<p>配置git代理，输入命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global http.proxy http://电脑ip:代理端口</span><br><span class="line">git config --global https.proxy http://电脑ip:代理端口</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2024/11/17/96817998/image-20241124163453089.png" alt="image-20241124163453089"></p>
+<p>使用<code>git config --list</code>查看刚才的配置。</p>
+<p><strong>解决方法二</strong></p>
+<p>为什么要有两个解决方法呢，因为后面在编译静态库的时候，有可能即使你设置了代理Git依然会失败。</p>
+<p>首先取消掉刚才设置的代理，输入命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global --unset http.proxy</span><br><span class="line">git config --global --unset https.proxy</span><br></pre></td></tr></table></figure>
+
+<p>去网上找一下国内的Github镜像网站，例如<a target="_blank" rel="noopener" href="https://gitclone.com/">gitclone</a>。</p>
+<p>然后按照网站上的提示设置</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global url.&quot;https://gitclone.com/&quot;.insteadOf https://</span><br></pre></td></tr></table></figure>
+
+<p>基本原理都是配置git在克隆某个仓库的时候去替换掉仓库的链接的一部分，这样就可以走代理网站加速克隆了。每个代理网站的替换方式有区别，并且这些网站可能随时挂掉，所以需要自行寻找然后配置insteadof。</p>
+<p>4、克隆micro_ros_setup。</p>
+<p>根据Github上的<a target="_blank" rel="noopener" href="https://github.com/micro-ROS/micro_ros_setup">教程</a>安装即可。</p>
+<p>找一个干净的目录，依次执行一下命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">source /opt/ros/$ROS_DISTRO/setup.bash # 如果前面执行过 echo &quot;source /opt/ros/humble/setup.bash&quot; &gt;&gt; ~/.bashrc 这条命令可以忽略</span><br><span class="line"></span><br><span class="line">mkdir uros_ws &amp;&amp; cd uros_ws</span><br><span class="line"></span><br><span class="line">git clone -b $ROS_DISTRO https://github.com/micro-ROS/micro_ros_setup.git src/micro_ros_setup</span><br><span class="line"></span><br><span class="line">rosdep update &amp;&amp; rosdep install --from-paths src --ignore-src -y</span><br><span class="line"></span><br><span class="line">colcon build</span><br><span class="line"></span><br><span class="line">source install/local_setup.bash</span><br></pre></td></tr></table></figure>
+
+<p>更新ros依赖的时候大概率会遇到网络方面的问题，鱼香ROS大佬也帮我们解决了，按照这个<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/398754989">教程</a>配置。</p>
+<p>配置完成后后续在有使用到<code>rosdep</code>命令时全部替换成<code>rosdepc</code>即可。</p>
+<p><img src="/2024/11/17/96817998/image-20241124170004309.png" alt="image-20241124170004309"></p>
+<p>5、编译<strong>libmicroros.a</strong></p>
+<p>接下来就可以依据这个教程编译静态库了<a target="_blank" rel="noopener" href="https://micro.ros.org/docs/tutorials/advanced/create_custom_static_library/">Creating custom static micro-ROS library</a>。</p>
+<p>大概的步骤和官方说的差不多，主要涉及到工具链的设置以及colcon.meta配置。</p>
+<p>我以RK3566举例，RK3566是cortexa55核的芯片。</p>
+<p>首先使用命令创建一个通用的lib，注意如果网络有问题这一步很容易失败。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ros2 run micro_ros_setup create_firmware_ws.sh generate_lib</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2024/11/17/96817998/image-20241124171949763.png" alt="image-20241124171949763"></p>
+<p>创建Cmake和配置文件。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">touch cortexa55_toolchain.cmake</span><br><span class="line">touch cortexa55_colcon.meta</span><br></pre></td></tr></table></figure>
+
+<p>根据实际情况编写Cmake和配置文件</p>
+<p>cortexa55_toolchain.cmake内容：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">设置目标系统为通用嵌入式</span></span><br><span class="line">set(CMAKE_SYSTEM_NAME Generic)</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">启用交叉编译模式</span></span><br><span class="line">set(CMAKE_CROSSCOMPILING 1)</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">设置编译目标类型</span></span><br><span class="line">set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">设置AArch64工具链路径及编译器</span></span><br><span class="line">set(CMAKE_C_COMPILER &quot;/home/ss/WorkSpace/uros_ws/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/aarch64-elf-gcc&quot;)</span><br><span class="line">set(CMAKE_CXX_COMPILER &quot;/home/ss/WorkSpace/uros_ws/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/aarch64-elf-g++&quot;)</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">确保编译器可用</span></span><br><span class="line">set(CMAKE_C_COMPILER_WORKS 1 CACHE INTERNAL &quot;&quot;)</span><br><span class="line">set(CMAKE_CXX_COMPILER_WORKS 1 CACHE INTERNAL &quot;&quot;)</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">AArch64优化编译标志</span></span><br><span class="line">set(FLAGS &quot;-O2 -ffunction-sections -fdata-sections -fno-exceptions -mcpu=cortex-a53 -nostdlib --param max-inline-insns-single=500 -D&#x27;RCUTILS_LOG_MIN_SEVERITY=RCUTILS_LOG_MIN_SEVERITY_NONE&#x27;&quot; CACHE STRING &quot;&quot; FORCE)</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">C语言编译标志</span></span><br><span class="line">set(CMAKE_C_FLAGS_INIT &quot;-std=c11 $&#123;FLAGS&#125; -DCLOCK_MONOTONIC=0 -D&#x27;__attribute__(x)=&#x27;&quot; CACHE STRING &quot;&quot; FORCE)</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">C++语言编译标志</span></span><br><span class="line">set(CMAKE_CXX_FLAGS_INIT &quot;-std=c++11 $&#123;FLAGS&#125; -fno-rtti -DCLOCK_MONOTONIC=0 -D&#x27;__attribute__(x)=&#x27;&quot; CACHE STRING &quot;&quot; FORCE)</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">设置字节序为小端</span></span><br><span class="line">set(__BIG_ENDIAN__ 0)</span><br></pre></td></tr></table></figure>
+
+<p>cortexa55_colcon.meta内容：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;names&quot;: &#123;</span><br><span class="line">        &quot;tracetools&quot;: &#123;</span><br><span class="line">            &quot;cmake-args&quot;: [</span><br><span class="line">                &quot;-DTRACETOOLS_DISABLED=ON&quot;,  // 禁用 tracetools 库，该库用于跟踪 ROS 2 运行时的行为</span><br><span class="line">                &quot;-DTRACETOOLS_STATUS_CHECKING_TOOL=OFF&quot;  // 禁用状态检查工具，用于减少不必要的调试信息</span><br><span class="line">            ]</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;rosidl_typesupport&quot;: &#123;</span><br><span class="line">            &quot;cmake-args&quot;: [</span><br><span class="line">                &quot;-DROSIDL_TYPESUPPORT_SINGLE_TYPESUPPORT=ON&quot;  // 启用单一类型支持，可能是为了减少代码生成的复杂度或内存开销</span><br><span class="line">            ]</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;rcl&quot;: &#123;</span><br><span class="line">            &quot;cmake-args&quot;: [</span><br><span class="line">                &quot;-DBUILD_TESTING=OFF&quot;,  // 禁用测试构建，减少构建时间</span><br><span class="line">                &quot;-DRCL_COMMAND_LINE_ENABLED=OFF&quot;,  // 禁用 RCL 的命令行工具功能</span><br><span class="line">                &quot;-DRCL_LOGGING_ENABLED=OFF&quot;  // 禁用 RCL 的日志功能</span><br><span class="line">            ]</span><br><span class="line">        &#125;, </span><br><span class="line">        &quot;rcutils&quot;: &#123;</span><br><span class="line">            &quot;cmake-args&quot;: [</span><br><span class="line">                &quot;-DENABLE_TESTING=OFF&quot;,  // 禁用 rcutils 测试功能</span><br><span class="line">                &quot;-DRCUTILS_NO_FILESYSTEM=ON&quot;,  // 禁用文件系统支持，减少内存使用</span><br><span class="line">                &quot;-DRCUTILS_NO_THREAD_SUPPORT=ON&quot;,  // 禁用线程支持，适用于没有线程的环境</span><br><span class="line">                &quot;-DRCUTILS_NO_64_ATOMIC=ON&quot;,  // 禁用 64 位原子操作支持，可能是为了兼容 32 位系统</span><br><span class="line">                &quot;-DRCUTILS_AVOID_DYNAMIC_ALLOCATION=ON&quot;  // 避免使用动态内存分配，减少堆内存的使用</span><br><span class="line">            ]</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;microxrcedds_client&quot;: &#123;</span><br><span class="line">            &quot;cmake-args&quot;: [</span><br><span class="line">                &quot;-DUCLIENT_PIC=OFF&quot;,  // 禁用编译时的 PIC (Position Independent Code)，可能是为了某些平台的优化</span><br><span class="line">                &quot;-DUCLIENT_PROFILE_UDP=OFF&quot;,  // 禁用 UDP 协议支持</span><br><span class="line">                &quot;-DUCLIENT_PROFILE_TCP=OFF&quot;,  // 禁用 TCP 协议支持</span><br><span class="line">                &quot;-DUCLIENT_PROFILE_DISCOVERY=OFF&quot;,  // 禁用自动发现功能</span><br><span class="line">                &quot;-DUCLIENT_PROFILE_SERIAL=OFF&quot;,  // 禁用串行通信支持</span><br><span class="line">                &quot;-UCLIENT_PROFILE_STREAM_FRAMING=ON&quot;,  // 启用流分帧支持</span><br><span class="line">                &quot;-DUCLIENT_PROFILE_CUSTOM_TRANSPORT=ON&quot;  // 启用自定义传输配置</span><br><span class="line">            ]</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;rmw_microxrcedds&quot;: &#123;</span><br><span class="line">            &quot;cmake-args&quot;: [</span><br><span class="line">                &quot;-DRMW_UXRCE_MAX_NODES=1&quot;,  // 设置最大节点数为 1，适用于节点数量较少的场景</span><br><span class="line">                &quot;-DRMW_UXRCE_MAX_PUBLISHERS=5&quot;,  // 设置最大发布者数为 5</span><br><span class="line">                &quot;-DRMW_UXRCE_MAX_SUBSCRIPTIONS=5&quot;,  // 设置最大订阅者数为 5</span><br><span class="line">                &quot;-DRMW_UXRCE_MAX_SERVICES=1&quot;,  // 设置最大服务数为 1</span><br><span class="line">                &quot;-DRMW_UXRCE_MAX_CLIENTS=1&quot;,  // 设置最大客户端数为 1</span><br><span class="line">                &quot;-DRMW_UXRCE_MAX_HISTORY=4&quot;,  // 设置最大消息历史数量为 4</span><br><span class="line">                &quot;-DRMW_UXRCE_TRANSPORT=custom&quot;  // 设置传输类型为自定义，适用于特殊的传输配置</span><br><span class="line">            ]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下载<a target="_blank" rel="noopener" href="https://developer.arm.com/downloads/-/gnu-a/8-3-2019-03">工具链</a>放到对应的目录下。</p>
+<p><img src="/2024/11/17/96817998/image-20241124172812291.png" alt="image-20241124172812291"></p>
+<p><img src="/2024/11/17/96817998/image-20241124172730046.png" alt="image-20241124172730046"></p>
+<p><img src="/2024/11/17/96817998/image-20241124173040941.png" alt="image-20241124173040941"></p>
+<p>注意刚才cmake脚本中设置的工具链路径。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">设置AArch64工具链路径及编译器</span></span><br><span class="line">set(CMAKE_C_COMPILER &quot;/home/ss/WorkSpace/uros_ws/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/aarch64-elf-gcc&quot;)</span><br><span class="line">set(CMAKE_CXX_COMPILER &quot;/home/ss/WorkSpace/uros_ws/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/aarch64-elf-g++&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>输入命令编译。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source install/local_setup.bash &amp;&amp; ros2 run micro_ros_setup build_firmware.sh $(pwd)/cortexa55_toolchain.cmake $(pwd)/cortexa55_colcon.meta</span><br></pre></td></tr></table></figure>
+
+<p>编译成功后，静态库保存在**.&#x2F;firmware&#x2F;build&#x2F;**目录下。</p>
+<p><img src="/2024/11/17/96817998/image-20241124173621475.png" alt="image-20241124173621475"></p>
+<p>6、总结</p>
+<p>编译配置其实蛮简单的，最大的问题是网络，网络不好很容易遇到奇奇怪怪的问题导致编译失败。</p>
+<h1 id="移植Micro-Ros"><a href="#移植Micro-Ros" class="headerlink" title="移植Micro Ros"></a>移植Micro Ros</h1>
+    </div>
+
+    
+    <div class="about">
+        <h1>关于本文</h1>
+        <div class="details">
+            <p>由 Shane 撰写, 采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a> 许可协议.</p>
+        </div>
+        
+        <p class="tags">
+            
+            <a href="/tags/Micro-Ros/" class="tag">#Micro Ros</a>
+        </p>
+        
+    </div>
+    
+
+    <div class="container post-prev-next">
+        
+        <a href="/2024/11/17/RT-Thread.html" class="next">
+            <div>
+                <div class="text">
+                    <p class="label">下一篇</p>
+                    <h3 class="title">泰山派&amp;RT-Thread</h3>
+                </div>
+            </div>
+        </a>
+        
+        
+        <a href="/2024/11/17/828693369.html" class="prev">
+            <div>
+                <div class="text">
+                    <p class="label">上一篇</p>
+                    <h3 class="title">DWMAC-RK驱动解析</h3>
+                </div>
+            </div>
+        </a>
+        
+    </div>
+
+    
+        
+        
+    
+</article>
+
+        <footer>
+    <div class="inner">
+        <div class="copyright">
+            <span>&copy; 2026 Shane</span><span class="sep">|</span><span>由 <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> 驱动</span>
+            
+        </div>
+        
+        <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+            <label>
+                <input type="radio" value="light">
+                <span>浅色</span>
+            </label>
+            <label>
+                <input type="radio" value="dark">
+                <span>深色</span>
+            </label>
+            <label>
+                <input type="radio" value="auto">
+                <span>自动</span>
+            </label>
+        </div>
+        
+    </div>
+</footer>
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+        
+        
+
+    </body>
+</html>

@@ -1,0 +1,29 @@
+.paginator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    padding: 16px;
+    margin: 8px 8px 64px;
+}
+
+.paginator>* {
+    border-radius: 980px;
+    padding: 6px 14px;
+    user-select: none;
+    transition: all 0.2s;
+}
+
+.paginator>*:hover {
+    text-decoration: none;
+    background-color: var(--card-bg);
+}
+
+.paginator .current {
+    color: var(--white-txt-on-blue-bg);
+    background-color: var(--blue);
+}
+
+.paginator .current:hover {
+    background-color: var(--blue);
+}

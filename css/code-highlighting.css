@@ -1,0 +1,77 @@
+/* This Code Highlighting Theme is based on GitHub Theme */
+
+.gutter {
+    color: var(--grey);
+    opacity: .6;
+    user-select: none;
+}
+
+.highlight .comment, .highlight .quote {
+    color: #6e7781;
+    font-style: italic;
+}
+
+.highlight .name, .highlight .selector-tag {
+    color: #116329;
+}
+
+.highlight .attr, .highlight .meta, .highlight .meta-keyword, .highlight .attribute, .highlight .number, .highlight .selector-class, .highlight .literal, .highlight .symbol {
+    color: #0550ae;
+}
+
+.highlight .string {
+    color: #0a3069;
+}
+
+.highlight .built_in, .highlight .title, .highlight .type {
+    color: #8250df;
+}
+
+.highlight .keyword {
+    color: #cf222e;
+}
+
+@media (prefers-color-scheme: dark) {
+    body[data-color-scheme="auto"] .highlight .comment, body[data-color-scheme="auto"] .highlight .quote {
+        color: #8b949e;
+    }
+    body[data-color-scheme="auto"] .highlight .name, body[data-color-scheme="auto"] .highlight .selector-tag {
+        color: #7ee787;
+    }
+    body[data-color-scheme="auto"] .highlight .attr, body[data-color-scheme="auto"] .highlight .meta, body[data-color-scheme="auto"] .highlight .meta-keyword, body[data-color-scheme="auto"] .highlight .attribute, body[data-color-scheme="auto"] .highlight .number, body[data-color-scheme="auto"] .highlight .selector-class, body[data-color-scheme="auto"] .highlight .literal, body[data-color-scheme="auto"] .highlight .symbol {
+        color: #79c0ff;
+    }
+    body[data-color-scheme="auto"] .highlight .string {
+        color: #a5d6ff;
+    }
+    body[data-color-scheme="auto"] .highlight .built_in, body[data-color-scheme="auto"] .highlight .title, body[data-color-scheme="auto"] .highlight .type {
+        color: #d2a8ff;
+    }
+    body[data-color-scheme="auto"] .highlight .keyword {
+        color: #ff7b72;
+    }
+}
+
+body[data-color-scheme="dark"] .highlight .comment, body[data-color-scheme="dark"] .highlight .quote {
+    color: #8b949e;
+}
+
+body[data-color-scheme="dark"] .highlight .name, body[data-color-scheme="dark"] .highlight .selector-tag {
+    color: #7ee787;
+}
+
+body[data-color-scheme="dark"] .highlight .attr, body[data-color-scheme="dark"] .highlight .meta, body[data-color-scheme="dark"] .highlight .meta-keyword, body[data-color-scheme="dark"] .highlight .attribute, body[data-color-scheme="dark"] .highlight .number, body[data-color-scheme="dark"] .highlight .selector-class, body[data-color-scheme="dark"] .highlight .literal, body[data-color-scheme="dark"] .highlight .symbol {
+    color: #79c0ff;
+}
+
+body[data-color-scheme="dark"] .highlight .string {
+    color: #a5d6ff;
+}
+
+body[data-color-scheme="dark"] .highlight .built_in, body[data-color-scheme="dark"] .highlight .title, body[data-color-scheme="dark"] .highlight .type {
+    color: #d2a8ff;
+}
+
+body[data-color-scheme="dark"] .highlight .keyword {
+    color: #ff7b72;
+}
