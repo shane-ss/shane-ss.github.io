@@ -8,21 +8,6 @@ tags:
 date: 2026-10-31 18:00:00
 ---
 
-# 问题
-
-用 VirtualHere 共享 USB 设备时，客户端报错：
-
-```text
-When running the Client as a Service you can only connect to purchased servers
-```
-
-客户端以服务模式运行时，只能连接已购买授权的服务器。而且未授权的服务器同时只能共享一个设备，所以我换成了开源免费的 USB/IP。
-
-- 服务端（接 USB 设备的电脑）：`usbipd-win`
-- 客户端（使用设备的电脑）：`usbip-win2`
-
-下面的命令都在管理员终端里运行。
-
 # 安装服务端
 
 ```bash

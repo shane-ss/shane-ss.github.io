@@ -56,4 +56,4 @@ Windows 上同时开着 v2rayN 的 TUN 模式（sing-box 核心）和 Tailscale�
 tailscale ping <对端设备名>
 ```
 
-看到 `via <IP>:<端口>` 就是直连，`via DERP` 则是中继。我这边修复后是 IPv6 直连，到虚拟机的 ping 30 个全通。
+看到 `via <IP>:<端口>` 就是直连，`via DERP` 则是中继。
