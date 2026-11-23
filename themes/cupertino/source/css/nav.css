@@ -36,6 +36,14 @@ nav .title {
     color: var(--black-2)!important;
 }
 
+nav .title .nav-logo {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+    vertical-align: -5px;
+    border-radius: 6px;
+}
+
 nav .nav-arrow {
     display: none;
 }

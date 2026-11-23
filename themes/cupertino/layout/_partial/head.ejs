@@ -34,7 +34,9 @@
   %>
   <title><% if (title){ %><%= title %> - <% } %><%= config.title %></title>
   <% if (theme.favicon){ %>
-    <%- favicon_tag(theme.favicon) %>
+    <link rel="icon" href="<%- url_for(theme.favicon) %>"<% if (/\.svg$/.test(theme.favicon)) { %> type="image/svg+xml"<% } %>>
+    <link rel="alternate icon" type="image/png" href="<%- url_for('/favicon.png') %>">
+    <link rel="apple-touch-icon" href="<%- url_for('/apple-touch-icon.png') %>">
   <% } %>
   <% if (theme.manifest) { %>
     <link rel='manifest' href='<%= theme.manifest %>'>
