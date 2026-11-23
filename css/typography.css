@@ -1,0 +1,37 @@
+.divider, hr {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 40px auto;
+}
+
+.divider {
+    margin: 48px auto;
+}
+
+img {
+    width: 100%;
+}
+
+::marker {
+    color: var(--grey);
+}
+
+blockquote {
+    border-left: 3px solid var(--link);
+}
+
+pre, code {
+    font-family: "SF Mono", "JetBrains Mono", "Cascadia Code", Menlo, Consolas, "Courier New", monospace;
+}
+
+pre {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+code {
+    font-size: .85em;
+    background-color: var(--inline-code-bg);
+    padding: .15em .4em;
+    border-radius: 6px;
+}
